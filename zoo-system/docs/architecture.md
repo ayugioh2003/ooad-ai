@@ -1,5 +1,134 @@
 # 系統架構設計
 
+## UML 系統架構圖
+
+```mermaid
+graph TB
+    %% 使用者介面層
+    subgraph "表現層 (Presentation Layer)"
+        UI[遊客介面<br/>Visitor UI]
+        AdminUI[管理員介面<br/>Admin UI]
+        API[REST API<br/>Controllers]
+    end
+    
+    %% 業務邏輯層
+    subgraph "業務邏輯層 (Business Logic Layer)"
+        WowService[Wow 服務<br/>WowService]
+        AnimalService[動物服務<br/>AnimalService]
+        VisitorService[訪客服務<br/>VisitorService]
+        PerformanceService[表演服務<br/>PerformanceService]
+        LeaderboardService[排行榜服務<br/>LeaderboardService]
+    end
+    
+    %% 資料存取層
+    subgraph "資料存取層 (Data Access Layer)"
+        WowRepo[Wow 儲存庫<br/>WowRepository]
+        AnimalRepo[動物儲存庫<br/>AnimalRepository]
+        VisitorRepo[訪客儲存庫<br/>VisitorRepository]
+        PerformanceRepo[表演儲存庫<br/>PerformanceRepository]
+    end
+    
+    %% 資料庫層
+    subgraph "資料持久層 (Data Persistence)"
+        DB[(資料庫<br/>Database)]
+        Cache[(快取<br/>Redis Cache)]
+    end
+    
+    %% 外部系統
+    subgraph "外部服務"
+        Notification[通知服務<br/>Notification Service]
+        Analytics[分析服務<br/>Analytics Service]
+    end
+    
+    %% 連接關係
+    UI --> API
+    AdminUI --> API
+    
+    API --> WowService
+    API --> AnimalService
+    API --> VisitorService
+    API --> PerformanceService
+    API --> LeaderboardService
+    
+    WowService --> WowRepo
+    AnimalService --> AnimalRepo
+    VisitorService --> VisitorRepo
+    PerformanceService --> PerformanceRepo
+    
+    WowRepo --> DB
+    AnimalRepo --> DB
+    VisitorRepo --> DB
+    PerformanceRepo --> DB
+    
+    LeaderboardService --> Cache
+    WowService --> Cache
+    
+    PerformanceService --> Notification
+    WowService --> Analytics
+    
+    %% 觀察者模式
+    PerformanceService -.->|notify| UI
+    PerformanceService -.->|notify| Notification
+```
+
+## 模組依賴圖
+
+```mermaid
+graph LR
+    %% 模組定義
+    subgraph "核心模組 (Core Modules)"
+        Models[實體模型<br/>Models]
+        Interfaces[介面定義<br/>Interfaces]
+    end
+    
+    subgraph "業務模組 (Business Modules)"
+        WowModule[Wow 模組<br/>WowModule]
+        AnimalModule[動物模組<br/>AnimalModule]
+        VisitorModule[訪客模組<br/>VisitorModule]
+        PerformanceModule[表演模組<br/>PerformanceModule]
+    end
+    
+    subgraph "基礎設施模組 (Infrastructure Modules)"
+        DatabaseModule[資料庫模組<br/>DatabaseModule]
+        CacheModule[快取模組<br/>CacheModule]
+        NotificationModule[通知模組<br/>NotificationModule]
+    end
+    
+    subgraph "應用模組 (Application Modules)"
+        WebModule[Web 模組<br/>WebModule]
+        APIModule[API 模組<br/>APIModule]
+    end
+    
+    %% 依賴關係
+    WowModule --> Models
+    AnimalModule --> Models
+    VisitorModule --> Models
+    PerformanceModule --> Models
+    
+    WowModule --> Interfaces
+    AnimalModule --> Interfaces
+    VisitorModule --> Interfaces
+    PerformanceModule --> Interfaces
+    
+    WowModule --> DatabaseModule
+    AnimalModule --> DatabaseModule
+    VisitorModule --> DatabaseModule
+    PerformanceModule --> DatabaseModule
+    
+    WowModule --> CacheModule
+    PerformanceModule --> NotificationModule
+    
+    WebModule --> WowModule
+    WebModule --> AnimalModule
+    WebModule --> VisitorModule
+    WebModule --> PerformanceModule
+    
+    APIModule --> WowModule
+    APIModule --> AnimalModule
+    APIModule --> VisitorModule
+    APIModule --> PerformanceModule
+```
+
 ## 整體架構概述
 
 本系統採用分層架構（Layered Architecture）設計，結合 MVC（Model-View-Controller）模式，確保系統的可維護性和擴展性。

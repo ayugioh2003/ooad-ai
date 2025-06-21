@@ -1,5 +1,230 @@
 # 類別圖設計
 
+## UML 類別圖
+
+```mermaid
+classDiagram
+    %% 核心實體類別
+    class Animal {
+        -id: string
+        -name: string
+        -species: string
+        -age: number
+        -description: string
+        -wowGenerationAbility: number
+        -skills: Skill
+        -location: Location
+        -performances: Performance
+        
+        +performSkill(skill: Skill): Performance
+        +performRandomSkill(): Performance
+        +addSkill(skill: Skill): void
+        +removeSkill(skillId: string): boolean
+        +isPerforming(): boolean
+        +getCurrentPerformance(): Performance
+        +updateInfo(name: string, description: string): void
+        +getId(): string
+        +getName(): string
+        +getSkills(): Skill
+    }
+    
+    class Visitor {
+        -id: string
+        -name: string
+        -visitDate: Date
+        -totalWowPoints: number
+        -wowCollection: WowCollection
+        
+        +rateWow(animal: Animal, intensity: number, category: WowCategory): Wow
+        +shareWow(wow: Wow): ShareLink
+        +viewAnimal(animalId: string): Animal
+        +getWowCollection(): WowCollection
+        +getTotalWowPoints(): number
+        +addWowPoints(points: number): void
+    }
+    
+    class Wow {
+        -id: string
+        -timestamp: Date
+        -animal: Animal
+        -visitor: Visitor
+        -location: Location
+        -category: WowCategory
+        -intensity: number
+        -description: string
+        -performance: Performance
+        
+        +generateShareLink(): string
+        +isRatedBy(visitor: Visitor): boolean
+        +getDetails(): WowDetails
+        +calculateWowPoints(): number
+        +isValid(): boolean
+    }
+    
+    class Performance {
+        -id: string
+        -animal: Animal
+        -skill: Skill
+        -startTime: Date
+        -endTime: Date | null
+        -duration: number
+        -location: Location
+        -isActiveFlag: boolean
+        
+        +start(): void
+        +end(): void
+        +isActive(): boolean
+        +getActualDuration(): number
+    }
+    
+    class Skill {
+        -id: string
+        -name: string
+        -description: string
+        -difficulty: number
+        -category: SkillCategory
+        
+        +getId(): string
+        +getName(): string
+        +getDifficulty(): number
+    }
+    
+    class Location {
+        -id: string
+        -name: string
+        -description: string
+        -animals: Animal
+        
+        +addAnimal(animal: Animal): void
+        +removeAnimal(animalId: string): boolean
+        +getAnimals(): Animal
+    }
+    
+    %% 管理類別
+    class WowCollection {
+        -visitor: Visitor
+        -wowRecords: Wow
+        -totalPoints: number
+        
+        +addWow(wow: Wow): void
+        +getWowsByCategory(category: WowCategory): Wow
+        +getWowsByAnimal(animal: Animal): Wow
+        +calculateTotalPoints(): number
+    }
+    
+    class ShareLink {
+        -id: string
+        -wow: Wow
+        -sharedBy: Visitor
+        -createdAt: Date
+        -url: string
+        -viewCount: number
+        
+        +generateUrl(): string
+        +incrementViewCount(): void
+        +getWowDetails(): Wow
+    }
+    
+    %% 服務類別
+    class WowManager {
+        -wowRecords: Wow
+        -shareLinks: ShareLink
+        
+        +createWow(animal: Animal, visitor: Visitor, intensity: number, category: WowCategory): Wow
+        +getWowsByAnimal(animalId: string): Wow
+        +getWowsByVisitor(visitorId: string): Wow
+        +createShareLink(wow: Wow): ShareLink
+    }
+    
+    class AnimalManager {
+        -animals: Animal
+        -performanceScheduler: PerformanceScheduler
+        
+        +addAnimal(animal: Animal): void
+        +removeAnimal(animalId: string): boolean
+        +getAnimal(animalId: string): Animal
+        +startRandomPerformance(): Performance
+    }
+    
+    class VisitorService {
+        -visitors: Visitor
+        -leaderboard: Leaderboard
+        
+        +createVisitor(name: string): Visitor
+        +getVisitor(visitorId: string): Visitor
+        +updateLeaderboard(): void
+    }
+    
+    class Leaderboard {
+        -visitorRankings: VisitorRanking
+        -animalRankings: AnimalRanking
+        -lastUpdated: Date
+        
+        +updateVisitorRankings(): void
+        +updateAnimalRankings(): void
+        +getTopVisitors(limit: number): VisitorRanking
+        +getTopAnimals(limit: number): AnimalRanking
+    }
+    
+    class PerformanceScheduler {
+        -activePerformances: Performance
+        -animals: Animal
+        
+        +scheduleRandomPerformance(): void
+        +startPerformance(animal: Animal, skill: Skill): Performance
+        +isAnimalPerforming(animal: Animal): boolean
+    }
+    
+    %% 列舉
+    class WowCategory {
+        <<enumeration>>
+        CUTE
+        SKILL
+        INTERACTION
+        SURPRISE
+    }
+    
+    class SkillCategory {
+        <<enumeration>>
+        ACROBATIC
+        CUTE
+        INTELLIGENT
+        SOCIAL
+    }
+    
+    %% 關係
+    Animal "1" -- "0..*" Skill : "has"
+    Animal "1" -- "0..*" Performance : "performs"
+    Animal "0..*" -- "1" Location : "located_at"
+    
+    Visitor "1" -- "1" WowCollection : "has"
+    Visitor "1" -- "0..*" Wow : "rates"
+    Visitor "1" -- "0..*" ShareLink : "shares"
+    
+    Wow "0..*" -- "1" Animal : "about"
+    Wow "0..*" -- "1" Visitor : "rated_by"
+    Wow "0..*" -- "1" Performance : "for"
+    Wow "0..*" -- "1" Location : "at"
+    Wow "0..*" -- "1" WowCategory : "categorized_as"
+    
+    Performance "0..*" -- "1" Animal : "performed_by"
+    Performance "0..*" -- "1..*" Skill : "uses"
+    Performance "0..*" -- "1" Location : "at"
+    
+    Skill "0..*" -- "1" SkillCategory : "categorized_as"
+    
+    WowCollection "1" -- "0..*" Wow : "contains"
+    ShareLink "0..*" -- "1" Wow : "shares"
+    
+    WowManager "1" -- "0..*" Wow : "manages"
+    WowManager "1" -- "0..*" ShareLink : "manages"
+    AnimalManager "1" -- "0..*" Animal : "manages"
+    AnimalManager "1" -- "1" PerformanceScheduler : "uses"
+    VisitorService "1" -- "0..*" Visitor : "manages"
+    VisitorService "1" -- "1" Leaderboard : "updates"
+    PerformanceScheduler "1" -- "0..*" Performance : "schedules"
+```
+
 ## 核心實體類別
 
 ### 1. Animal（動物）

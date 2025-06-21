@@ -1,5 +1,63 @@
 # 使用案例文件
 
+## UML 使用案例圖
+
+```mermaid
+graph TB
+    %% 參與者
+    Visitor[👤 遊客<br/>Visitor]
+    Admin[👨‍💼 系統管理員<br/>System Admin]
+    System[🖥️ 系統<br/>Zoo System]
+    
+    %% 遊客使用案例
+    subgraph "遊客功能"
+        UC01[UC-01: 進入動物園]
+        UC02[UC-02: 瀏覽動物資訊]
+        UC03[UC-03: 觀看動物表演]
+        UC04[UC-04: 評分 Wow]
+        UC05[UC-05: 查看 Wow 收集記錄]
+        UC06[UC-06: 查看排行榜]
+        UC07[UC-07: 分享 Wow]
+    end
+    
+    %% 管理員使用案例
+    subgraph "管理員功能"
+        UC08[UC-08: 管理動物資訊]
+        UC09[UC-09: 查看 Wow 統計]
+    end
+    
+    %% 系統使用案例
+    subgraph "系統功能"
+        UC10[UC-10: 自動觸發表演]
+    end
+    
+    %% 關係連接
+    Visitor --> UC01
+    Visitor --> UC02
+    Visitor --> UC03
+    Visitor --> UC04
+    Visitor --> UC05
+    Visitor --> UC06
+    Visitor --> UC07
+    
+    Admin --> UC08
+    Admin --> UC09
+    
+    System --> UC10
+    
+    %% 包含關係
+    UC04 -.->|include| ValidateVisitor[驗證遊客身份]
+    UC07 -.->|include| GenerateShareLink[生成分享連結]
+    
+    %% 擴展關係
+    UC02 -.->|extend| ViewPerformanceHistory[查看表演歷史]
+    UC05 -.->|extend| ExportRecords[匯出記錄]
+    
+    %% 系統觸發關係
+    UC10 --> UC03
+    UC03 --> UC04
+```
+
 ## 使用案例圖概述
 
 本系統主要有兩類使用者：遊客（Visitor）和系統管理員（System Admin）。
@@ -190,3 +248,72 @@
 - **可用性：** 系統應支援多位遊客同時使用
 - **可靠性：** Wow 記錄不應遺失
 - **安全性：** 防止惡意評分或刷分行為
+
+## 核心流程循序圖
+
+### Wow 評分流程
+
+```mermaid
+sequenceDiagram
+    participant V as 遊客 (Visitor)
+    participant UI as 使用者介面
+    participant PS as 表演服務 (PerformanceService)
+    participant WS as Wow服務 (WowService)
+    participant AM as 動物管理 (AnimalManager)
+    participant VS as 訪客服務 (VisitorService)
+    participant LB as 排行榜 (Leaderboard)
+    
+    Note over PS: 系統自動觸發表演
+    PS->>AM: 選擇隨機動物和技能
+    AM->>PS: 返回表演物件
+    PS->>UI: 通知表演開始
+    UI->>V: 顯示表演通知
+    
+    V->>UI: 選擇觀看表演
+    UI->>PS: 獲取表演詳情
+    PS->>UI: 返回表演資訊
+    UI->>V: 顯示表演進行中
+    
+    Note over PS: 表演結束
+    PS->>UI: 通知表演結束
+    UI->>V: 顯示評分介面
+    
+    V->>UI: 選擇 Wow 類型和強度
+    UI->>WS: 創建 Wow 記錄
+    WS->>WS: 驗證評分規則
+    WS->>WS: 計算 Wow 點數
+    WS->>VS: 更新遊客總點數
+    WS->>LB: 觸發排行榜更新
+    WS->>UI: 返回評分成功
+    UI->>V: 顯示評分完成及獲得點數
+```
+
+### 動物表演自動觸發流程
+
+```mermaid
+sequenceDiagram
+    participant Scheduler as 表演排程器
+    participant AM as 動物管理器
+    participant A as 動物 (Animal)
+    participant P as 表演 (Performance)
+    participant Observer as 觀察者們
+    
+    loop 每隔一段時間
+        Scheduler->>AM: 檢查可表演的動物
+        AM->>Scheduler: 返回可用動物列表
+        
+        alt 有可用動物
+            Scheduler->>AM: 隨機選擇動物和技能
+            AM->>A: 執行表演
+            A->>P: 創建表演物件
+            P->>Observer: 通知表演開始
+            
+            Note over P: 表演進行中
+            
+            P->>Observer: 通知表演結束
+            P->>P: 設為非活躍狀態
+        else 沒有可用動物
+            Scheduler->>Scheduler: 等待下次檢查
+        end
+    end
+```

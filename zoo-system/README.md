@@ -97,4 +97,5 @@ flowchart LR
 - [需求分析](./docs/requirements.md)
 - [類別圖](./docs/class-diagram.md)
 - [使用案例](./docs/use-cases.md)
+- [循序圖](./docs/sequence-diagram.md)
 - [系統架構](./docs/architecture.md)

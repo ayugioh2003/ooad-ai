@@ -3,9 +3,102 @@
 ## 1. 使用案例圖概述
 
 ### 主要參與者 (Actors)
+
 - **一般使用者 (User)**: 註冊使用者，可以發文、評價、瀏覽內容
 - **管理員 (Admin)**: 系統管理者，具有內容管理權限
 - **訪客 (Guest)**: 未登入使用者，只能瀏覽公開內容
+
+### 使用案例圖
+
+```mermaid
+flowchart TD
+    %% 參與者
+    Guest[("訪客<br/>Guest")]
+    User[("一般使用者<br/>User")]
+    Admin[("管理員<br/>Admin")]
+    
+    %% 使用案例
+    UC001(("UC-001<br/>使用者註冊"))
+    UC002(("UC-002<br/>使用者登入"))
+    UC003(("UC-003<br/>使用者登出"))
+    UC004(("UC-004<br/>查看個人資料"))
+    UC005(("UC-005<br/>發布貼文"))
+    UC006(("UC-006<br/>編輯貼文"))
+    UC007(("UC-007<br/>刪除貼文"))
+    UC008(("UC-008<br/>瀏覽貼文"))
+    UC009(("UC-009<br/>給予 Wow 評價"))
+    UC010(("UC-010<br/>查看 Wow 統計"))
+    UC011(("UC-011<br/>搜尋貼文"))
+    UC012(("UC-012<br/>查看 Wow 排行榜"))
+    UC013(("UC-013<br/>依類別瀏覽"))
+    UC014(("UC-014<br/>管理不當內容"))
+    UC015(("UC-015<br/>查看系統統計"))
+    
+    %% 訪客的使用案例
+    Guest --- UC001
+    Guest --- UC008
+    Guest --- UC012
+    Guest --- UC013
+    
+    %% 一般使用者的使用案例
+    User --- UC002
+    User --- UC003
+    User --- UC004
+    User --- UC005
+    User --- UC006
+    User --- UC007
+    User --- UC008
+    User --- UC009
+    User --- UC010
+    User --- UC011
+    User --- UC012
+    User --- UC013
+    
+    %% 管理員的使用案例 (繼承一般使用者)
+    Admin --- UC002
+    Admin --- UC003
+    Admin --- UC004
+    Admin --- UC005
+    Admin --- UC006
+    Admin --- UC007
+    Admin --- UC008
+    Admin --- UC009
+    Admin --- UC010
+    Admin --- UC011
+    Admin --- UC012
+    Admin --- UC013
+    Admin --- UC014
+    Admin --- UC015
+    
+    %% 包含關係
+    UC005 -.->|include| UC002
+    UC009 -.->|include| UC002
+    UC006 -.->|include| UC002
+    UC007 -.->|include| UC002
+    
+    %% 擴展關係
+    UC009 -.->|extend| UC008
+    UC008 -.->|extend| UC012
+    
+    %% 系統邊界
+    subgraph "Aotter-Wow 評價網站系統"
+        UC001
+        UC002
+        UC003
+        UC004
+        UC005
+        UC006
+        UC007
+        UC008
+        UC009
+        UC010
+        UC011
+        UC012
+        UC013
+        UC014
+        UC015
+    end
+```
 
 ## 2. 使用案例列表
 

@@ -81,20 +81,54 @@
 
 ## 🏗️ 系統架構概覽
 
-```
-前端 (HTML/CSS/JS + Bootstrap)
-         ↕ HTTP API
-後端 (Node.js + Express + TypeScript)
-├── Controllers (路由處理)
-├── Services (業務邏輯)  
-├── Repositories (資料存取)
-└── Models (領域模型)
-         ↕ SQL
-資料庫 (SQLite)
-├── users (使用者)
-├── posts (貼文)
-├── categories (類別)
-└── wows (評價)
+```mermaid
+flowchart TD
+    subgraph "前端層"
+        UI[使用者介面]
+        subgraph "前端技術"
+            HTML[HTML5]
+            CSS[CSS3 + Bootstrap]
+            JS[JavaScript/TypeScript]
+        end
+    end
+    
+    subgraph "後端系統 (Node.js + Express + TypeScript)"
+        subgraph "表現層"
+            Controllers[Controllers<br/>路由處理]
+        end
+        
+        subgraph "業務層"
+            Services[Services<br/>業務邏輯]
+        end
+        
+        subgraph "資料層"
+            Repositories[Repositories<br/>資料存取]
+            Models[Models<br/>領域模型]
+        end
+    end
+    
+    subgraph "資料庫層"
+        DB[(SQLite Database)]
+        subgraph "資料表"
+            Users[users<br/>使用者]
+            Posts[posts<br/>貼文]
+            Categories[categories<br/>類別]
+            Wows[wows<br/>評價]
+        end
+    end
+    
+    %% 連接關係
+    UI -.->|HTTP API| Controllers
+    Controllers --> Services
+    Services --> Repositories
+    Services --> Models
+    Repositories -.->|SQL| DB
+    
+    %% 資料表關係
+    DB --> Users
+    DB --> Posts  
+    DB --> Categories
+    DB --> Wows
 ```
 
 ## 📊 關鍵設計決策

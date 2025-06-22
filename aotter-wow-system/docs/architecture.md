@@ -24,20 +24,66 @@
 
 ## 2. 系統分層架構
 
-```
-┌─────────────────────────────────┐
-│        Presentation Layer       │  ← 表現層
-│    (Controllers + Views)        │
-├─────────────────────────────────┤
-│         Service Layer           │  ← 服務層  
-│     (Business Logic)            │
-├─────────────────────────────────┤
-│        Repository Layer         │  ← 資料存取層
-│     (Data Access)               │
-├─────────────────────────────────┤
-│         Database Layer          │  ← 資料庫層
-│        (SQLite)                 │
-└─────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph "Aotter-Wow 評價網站系統"
+        subgraph "表現層 (Presentation Layer)"
+            UC[UserController]
+            PC[PostController]
+            WC[WowController]
+            CC[CategoryController]
+            AC[AdminController]
+        end
+        
+        subgraph "服務層 (Service Layer)"
+            US[UserService]
+            PS[PostService]
+            WS[WowService]
+            CS[CategoryService]
+        end
+        
+        subgraph "資料存取層 (Repository Layer)"
+            UR[UserRepository]
+            PR[PostRepository]
+            WR[WowRepository]
+            CR[CategoryRepository]
+        end
+        
+        subgraph "資料庫層 (Database Layer)"
+            DB[(SQLite Database)]
+        end
+    end
+    
+    %% 外部參與者
+    User[使用者]
+    Admin[管理員]
+    Guest[訪客]
+    
+    %% 連接關係
+    User --> UC
+    User --> PC
+    User --> WC
+    Admin --> AC
+    Guest --> PC
+    
+    UC --> US
+    PC --> PS
+    WC --> WS
+    CC --> CS
+    AC --> US
+    AC --> PS
+    
+    US --> UR
+    PS --> PR
+    PS --> CR
+    WS --> WR
+    WS --> PR
+    CS --> CR
+    
+    UR --> DB
+    PR --> DB
+    WR --> DB
+    CR --> DB
 ```
 
 ### 2.1 表現層 (Presentation Layer)
@@ -90,6 +136,78 @@
 - 外鍵約束確保資料完整性
 
 ## 3. 目錄結構設計
+
+### 3.1 專案目錄樹狀圖
+
+```mermaid
+flowchart TD
+    Root[aotter-wow-system/]
+    
+    Root --> Package[package.json]
+    Root --> TSConfig[tsconfig.json]
+    Root --> ViteConfig[vite.config.ts]
+    Root --> Src[src/]
+    Root --> Public[public/]
+    Root --> Views[views/]
+    Root --> Tests[tests/]
+    
+    Src --> Controllers[controllers/]
+    Src --> Services[services/]
+    Src --> Repositories[repositories/]
+    Src --> Models[models/]
+    Src --> Database[database/]
+    Src --> Middleware[middleware/]
+    Src --> Routes[routes/]
+    Src --> Utils[utils/]
+    Src --> App[app.ts]
+    
+    Controllers --> UC[UserController.ts]
+    Controllers --> PC[PostController.ts]
+    Controllers --> WC[WowController.ts]
+    Controllers --> CC[CategoryController.ts]
+    
+    Services --> US[UserService.ts]
+    Services --> PS[PostService.ts]
+    Services --> WS[WowService.ts]
+    Services --> CS[CategoryService.ts]
+    
+    Repositories --> UR[UserRepository.ts]
+    Repositories --> PR[PostRepository.ts]
+    Repositories --> WR[WowRepository.ts]
+    Repositories --> CR[CategoryRepository.ts]
+    
+    Models --> UserModel[User.ts]
+    Models --> PostModel[Post.ts]
+    Models --> WowModel[Wow.ts]
+    Models --> CategoryModel[Category.ts]
+    
+    Database --> Connection[connection.ts]
+    Database --> Migrations[migrations/]
+    Database --> Seeds[seeds/]
+    
+    Middleware --> Auth[auth.ts]
+    Middleware --> Validation[validation.ts]
+    
+    Routes --> UserRoutes[userRoutes.ts]
+    Routes --> PostRoutes[postRoutes.ts]
+    Routes --> WowRoutes[wowRoutes.ts]
+    
+    Utils --> Helpers[helpers.ts]
+    
+    Public --> CSS[css/]
+    Public --> JS[js/]
+    Public --> Images[images/]
+    
+    Views --> Layout[layout/]
+    Views --> User[user/]
+    Views --> Post[post/]
+    Views --> Components[components/]
+    
+    Tests --> Unit[unit/]
+    Tests --> Integration[integration/]
+```
+
+### 3.2 詳細目錄結構
 
 ```
 aotter-wow-system/

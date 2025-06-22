@@ -43,38 +43,72 @@
 
 ### 2.1 核心類別
 
-```
-User
-├── id: Long
-├── username: String
-├── email: String
-├── password: String
-├── joinDate: Date
-├── userType: UserType (USER, ADMIN)
-├── posts: List<Post>
-└── wowsGiven: List<Wow>
+```mermaid
+classDiagram
+    class User {
+        -id: Long
+        -username: String
+        -email: String
+        -password: String
+        -joinDate: Date
+        -userType: UserType
+        +getId(): Long
+        +getUsername(): String
+        +getEmail(): String
+        +validatePassword(password: String): boolean
+        +isAdmin(): boolean
+    }
 
-Post
-├── id: Long
-├── title: String
-├── content: String
-├── publishDate: Date
-├── author: User
-├── category: Category
-├── wows: List<Wow>
-└── wowCount: Integer
+    class Post {
+        -id: Long
+        -title: String
+        -content: String
+        -publishDate: Date
+        -authorId: Long
+        -categoryId: Long
+        -wowCount: Integer
+        +getId(): Long
+        +getTitle(): String
+        +getContent(): String
+        +getWowCount(): Integer
+        +incrementWowCount(): void
+        +isAuthor(userId: Long): boolean
+    }
 
-Category
-├── id: Long
-├── name: String
-├── description: String
-└── posts: List<Post>
+    class Category {
+        -id: Long
+        -name: String
+        -description: String
+        +getId(): Long
+        +getName(): String
+        +getDescription(): String
+        +getPostCount(): Integer
+    }
 
-Wow
-├── id: Long
-├── user: User
-├── post: Post
-└── wowDate: Date
+    class Wow {
+        -id: Long
+        -userId: Long
+        -postId: Long
+        -wowDate: Date
+        +getId(): Long
+        +getUserId(): Long
+        +getPostId(): Long
+        +getWowDate(): Date
+        +validate(): boolean
+    }
+
+    class UserType {
+        <<enumeration>>
+        USER
+        ADMIN
+    }
+
+    %% 關係
+    User "1" -- "0..*" Post : "authors"
+    User "1" -- "0..*" Wow : "gives"
+    Post "1" -- "0..*" Wow : "receives"
+    Category "1" -- "0..*" Post : "categorizes"
+    User "1" -- "1" UserType : "has_type"
 ```
 
 ### 2.2 關係說明

@@ -154,13 +154,19 @@ flowchart TD
 4. **資料庫**: 選擇 SQLite - 適合 Demo，輕量級，無需額外安裝
 5. **後端技術**: Node.js + Express + TypeScript - 全棧 TypeScript 開發
 6. **狀態管理**: Pinia - Vue.js 官方推薦的狀態管理方案
-7. **認證**: Session-based - 比 JWT 簡單，適合 Demo
+7. **認證**: JWT Token - 現代化無狀態認證，支援前後端分離
 
 ### 業務規則決策
 1. **Wow 唯一性**: 每個使用者對同一貼文只能給一次 Wow
 2. **自評限制**: 使用者不能對自己的貼文給 Wow
 3. **內容導向**: 強調正面內容，建立良好社群氛圍
 4. **簡化權限**: 只有兩種使用者類型（一般使用者、管理員）
+
+### 安全性決策
+1. **JWT Token 認證**: 採用無狀態認證，支援前後端分離
+2. **Token 生命週期**: Access Token 15分鐘，Refresh Token 7天
+3. **Token 撤銷**: 實作 Refresh Token 黑名單機制
+4. **密碼安全**: 使用 bcrypt 進行密碼雜湊
 
 ## 🚀 接下來的步驟
 

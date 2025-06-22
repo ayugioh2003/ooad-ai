@@ -19,6 +19,8 @@
 - Node.js + Express.js (Web 框架)
 - TypeScript (型別安全)
 - SQLite 3 (輕量級資料庫)
+- JWT (JSON Web Token) 認證
+- bcrypt (密碼雜湊)
 
 **開發工具**
 
@@ -393,9 +395,10 @@ aotter-wow-system/
 ```
 POST   /api/users/register     # 使用者註冊
 POST   /api/users/login        # 使用者登入  
-GET    /api/users/profile      # 獲取個人資料
-PUT    /api/users/profile      # 更新個人資料
-POST   /api/users/logout       # 使用者登出
+POST   /api/auth/refresh       # 刷新 JWT Token
+POST   /api/users/logout       # 使用者登出 (撤銷 Refresh Token)
+GET    /api/users/profile      # 獲取個人資料 (需 Bearer Token)
+PUT    /api/users/profile      # 更新個人資料 (需 Bearer Token)
 ```
 
 **貼文相關**
@@ -501,6 +504,19 @@ CREATE TABLE wows (
 );
 ```
 
+**token_blacklist 資料表** (JWT Token 管理)
+```sql
+CREATE TABLE token_blacklist (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    token_jti VARCHAR(255) NOT NULL UNIQUE,  -- JWT ID
+    user_id INTEGER NOT NULL,
+    token_type VARCHAR(20) NOT NULL,  -- 'refresh' or 'access'
+    expires_at DATETIME NOT NULL,
+    revoked_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
 ### 5.2 索引設計
 
 ```sql
@@ -511,16 +527,28 @@ CREATE INDEX idx_posts_wow_count ON posts(wow_count DESC);
 CREATE INDEX idx_posts_publish_date ON posts(publish_date DESC);
 CREATE INDEX idx_wows_user_id ON wows(user_id);
 CREATE INDEX idx_wows_post_id ON wows(post_id);
+
+-- JWT Token 黑名單相關索引
+CREATE INDEX idx_token_blacklist_jti ON token_blacklist(token_jti);
+CREATE INDEX idx_token_blacklist_user_id ON token_blacklist(user_id);
+CREATE INDEX idx_token_blacklist_expires_at ON token_blacklist(expires_at);
 ```
 
 ## 6. 安全性設計
 
 ### 6.1 認證與授權
 
-**Session-based 認證**
-- 使用 express-session 管理使用者會話
-- Session 資料存儲在記憶體中（Demo 用途）
-- 登入後設置 session，登出後清除
+**JWT Token 認證**
+- 使用 JSON Web Token (JWT) 進行無狀態認證
+- 登入成功後返回 Access Token 和 Refresh Token
+- Access Token 有效期：15分鐘，Refresh Token 有效期：7天
+- 使用 RS256 演算法進行 Token 簽名
+
+**Token 管理策略**
+- Access Token 存儲在前端記憶體中 (Pinia Store)
+- Refresh Token 存儲在 httpOnly Cookie 中
+- 自動 Token 刷新機制
+- 登出時將 Refresh Token 加入黑名單
 
 **密碼安全**
 - 使用 bcrypt 進行密碼雜湊

@@ -378,10 +378,11 @@ classDiagram
         +register(req: Request, res: Response): Promise~void~
         +login(req: Request, res: Response): Promise~void~
         +logout(req: Request, res: Response): Promise~void~
+        +refreshToken(req: Request, res: Response): Promise~void~
         +getProfile(req: Request, res: Response): Promise~void~
         +updateProfile(req: Request, res: Response): Promise~void~
         +getUserStats(req: Request, res: Response): Promise~void~
-        -validateSession(req: Request): User
+        -validateJWT(req: Request): User
         -handleError(res: Response, error: Error): void
     }
 
@@ -491,8 +492,20 @@ classDiagram
         +static requireAuth(req: Request, res: Response, next: NextFunction): void
         +static requireAdmin(req: Request, res: Response, next: NextFunction): void
         +static optionalAuth(req: Request, res: Response, next: NextFunction): void
-        -static validateSession(sessionId: string): User | null
+        -static validateJWT(token: string): User | null
+        -static extractTokenFromHeader(req: Request): string | null
         -static sendUnauthorized(res: Response): void
+    }
+
+    class JWTService {
+        +static generateAccessToken(user: User): string
+        +static generateRefreshToken(user: User): string
+        +static verifyAccessToken(token: string): User | null
+        +static verifyRefreshToken(token: string): User | null
+        +static revokeRefreshToken(token: string): void
+        +static isTokenBlacklisted(token: string): boolean
+        -static privateKey: string
+        -static publicKey: string
     }
 
     class ValidationMiddleware {

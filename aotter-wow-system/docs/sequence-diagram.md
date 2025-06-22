@@ -32,8 +32,8 @@ sequenceDiagram
     DB-->>UR: 插入成功，返回userId
     UR-->>US: 創建成功
     US-->>UC: 註冊成功
-    UC->>UC: 建立使用者Session
-    UC-->>UI: 返回成功回應
+    UC->>UC: 生成JWT Token (Access + Refresh)
+    UC-->>UI: 返回成功回應和Token
     UI-->>User: 顯示註冊成功，自動登入
 ```
 
@@ -61,8 +61,8 @@ sequenceDiagram
     US->>US: 驗證密碼雜湊
     alt 密碼正確
         US-->>UC: 驗證成功，返回使用者資料
-        UC->>UC: 建立Session
-        UC-->>UI: 登入成功
+        UC->>UC: 生成JWT Token (Access + Refresh)
+        UC-->>UI: 登入成功，返回Token
         UI-->>User: 跳轉到首頁
     else 密碼錯誤
         US-->>UC: 驗證失敗
@@ -86,8 +86,8 @@ sequenceDiagram
     participant DB as SQLite資料庫
 
     User->>UI: 填寫貼文表單
-    UI->>PC: POST /api/posts
-    PC->>PC: Session驗證
+    UI->>PC: POST /api/posts (Bearer Token)
+    PC->>PC: JWT Token驗證
     PC->>PC: 輸入驗證
     PC->>PS: createPost(postData, userId)
     PS->>CR: validateCategory(categoryId)
@@ -120,8 +120,8 @@ sequenceDiagram
     participant DB as SQLite資料庫
 
     User->>UI: 點擊Wow按鈕
-    UI->>WC: POST /api/posts/:id/wow
-    WC->>WC: Session驗證
+    UI->>WC: POST /api/posts/:id/wow (Bearer Token)
+    WC->>WC: JWT Token驗證
     WC->>WS: giveWow(userId, postId)
     
     par 驗證過程
@@ -304,8 +304,43 @@ sequenceDiagram
 
 **快取策略**
 - 熱門貼文快取
-- 使用者Session快取
+- JWT Token黑名單快取
 - 類別資料快取
+
+---
+
+## SD-008: JWT Token 刷新流程
+
+```mermaid
+sequenceDiagram
+    participant UI as Vue.js 前端
+    participant UC as UserController
+    participant JS as JWTService
+    participant DB as SQLite資料庫
+
+    UI->>UC: POST /api/auth/refresh (Refresh Token in Cookie)
+    UC->>UC: 提取Refresh Token
+    UC->>JS: verifyRefreshToken(token)
+    JS->>JS: 驗證Token簽名和過期時間
+    JS->>DB: 檢查Token是否在黑名單
+    DB-->>JS: Token未被撤銷
+    JS-->>UC: Token有效，返回使用者資料
+    UC->>JS: generateAccessToken(user)
+    JS-->>UC: 新的Access Token
+    UC->>JS: generateRefreshToken(user)
+    JS-->>UC: 新的Refresh Token
+    UC->>UC: 設置新的Refresh Token Cookie
+    UC-->>UI: 返回新的Access Token
+    UI->>UI: 更新Pinia Store中的Token
+    
+    Note over UI,DB: 如果Refresh Token過期或無效
+    alt Refresh Token無效
+        JS-->>UC: Token無效
+        UC-->>UI: 401 Unauthorized
+        UI->>UI: 清除本地Token
+        UI->>UI: 重定向到登入頁面
+    end
+```
 
 ## 4. 物件互動複雜度分析
 

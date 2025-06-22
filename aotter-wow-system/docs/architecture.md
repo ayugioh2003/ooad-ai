@@ -8,25 +8,47 @@
 ### 1.2 技術選型
 
 **前端技術**
-- HTML5 + CSS3 + JavaScript (ES6+)
-- Bootstrap 5 (響應式 UI 框架)
-- 可選：Vue.js 3 (簡化前端開發)
+
+- Vue.js 3 (現代前端框架)
+- TypeScript (型別安全)
+- Tailwind CSS (實用優先的 CSS 框架)
+- Vite (快速建置工具)
 
 **後端技術**  
+
 - Node.js + Express.js (Web 框架)
 - TypeScript (型別安全)
 - SQLite 3 (輕量級資料庫)
 
 **開發工具**
+
 - npm/pnpm (套件管理)
 - Vite (建置工具)
 - ESLint + Prettier (程式碼品質)
+- Vue DevTools (Vue.js 開發工具)
 
 ## 2. 系統分層架構
 
 ```mermaid
 flowchart TD
-    subgraph "Aotter-Wow 評價網站系統"
+    subgraph "前端應用 (Vue.js + Tailwind CSS)"
+        subgraph "Vue.js 元件"
+            App[App.vue]
+            UserComponents[使用者元件]
+            PostComponents[貼文元件]
+            WowComponents[評價元件]
+            Layout[佈局元件]
+        end
+        
+        subgraph "Composables"
+            UserAPI[useUser]
+            PostAPI[usePost]
+            WowAPI[useWow]
+            AuthAPI[useAuth]
+        end
+    end
+    
+    subgraph "Aotter-Wow 後端系統"
         subgraph "表現層 (Presentation Layer)"
             UC[UserController]
             PC[PostController]
@@ -59,13 +81,28 @@ flowchart TD
     Admin[管理員]
     Guest[訪客]
     
-    %% 連接關係
-    User --> UC
-    User --> PC
-    User --> WC
-    Admin --> AC
-    Guest --> PC
+    %% 前端連接
+    User --> App
+    Admin --> App
+    Guest --> App
     
+    App --> UserComponents
+    App --> PostComponents
+    App --> WowComponents
+    App --> Layout
+    
+    UserComponents --> UserAPI
+    PostComponents --> PostAPI
+    WowComponents --> WowAPI
+    Layout --> AuthAPI
+    
+    %% API 連接
+    UserAPI -.->|HTTP/REST API| UC
+    PostAPI -.->|HTTP/REST API| PC
+    WowAPI -.->|HTTP/REST API| WC
+    AuthAPI -.->|HTTP/REST API| UC
+    
+    %% 後端連接
     UC --> US
     PC --> PS
     WC --> WS
@@ -146,65 +183,79 @@ flowchart TD
     Root --> Package[package.json]
     Root --> TSConfig[tsconfig.json]
     Root --> ViteConfig[vite.config.ts]
-    Root --> Src[src/]
-    Root --> Public[public/]
-    Root --> Views[views/]
+    Root --> TailwindConfig[tailwind.config.js]
+    Root --> Frontend[frontend/]
+    Root --> Backend[backend/]
     Root --> Tests[tests/]
     
-    Src --> Controllers[controllers/]
-    Src --> Services[services/]
-    Src --> Repositories[repositories/]
-    Src --> Models[models/]
-    Src --> Database[database/]
-    Src --> Middleware[middleware/]
-    Src --> Routes[routes/]
-    Src --> Utils[utils/]
-    Src --> App[app.ts]
+    subgraph "前端 Vue.js 應用"
+        Frontend --> FrontendSrc[src/]
+        Frontend --> FrontendPublic[public/]
+        
+        FrontendSrc --> Components[components/]
+        FrontendSrc --> Views[views/]
+        FrontendSrc --> Composables[composables/]
+        FrontendSrc --> Stores[stores/]
+        FrontendSrc --> Router[router/]
+        FrontendSrc --> FrontendTypes[types/]
+        FrontendSrc --> FrontendUtils[utils/]
+        
+        Components --> CommonComponents[common/]
+        Components --> UserComponents[user/]
+        Components --> PostComponents[post/]
+        Components --> WowComponents[wow/]
+        
+        Views --> HomeView[Home.vue]
+        Views --> LoginView[Login.vue]
+        Views --> PostsView[Posts.vue]
+        Views --> ProfileView[Profile.vue]
+        
+        Composables --> UseAuth[useAuth.ts]
+        Composables --> UseUser[useUser.ts]
+        Composables --> UsePost[usePost.ts]
+        Composables --> UseWow[useWow.ts]
+        
+        Stores --> AuthStore[auth.ts]
+        Stores --> UserStore[user.ts]
+        Stores --> PostStore[post.ts]
+    end
     
-    Controllers --> UC[UserController.ts]
-    Controllers --> PC[PostController.ts]
-    Controllers --> WC[WowController.ts]
-    Controllers --> CC[CategoryController.ts]
+    subgraph "後端 Node.js 應用"
+        Backend --> BackendSrc[src/]
+        Backend --> Database[database/]
+        
+        BackendSrc --> Controllers[controllers/]
+        BackendSrc --> Services[services/]
+        BackendSrc --> Repositories[repositories/]
+        BackendSrc --> Models[models/]
+        BackendSrc --> Middleware[middleware/]
+        BackendSrc --> Routes[routes/]
+        BackendSrc --> BackendTypes[types/]
+        BackendSrc --> BackendUtils[utils/]
+        BackendSrc --> App[app.ts]
+        
+        Controllers --> UC[UserController.ts]
+        Controllers --> PC[PostController.ts]
+        Controllers --> WC[WowController.ts]
+        
+        Services --> US[UserService.ts]
+        Services --> PS[PostService.ts]
+        Services --> WS[WowService.ts]
+        
+        Repositories --> UR[UserRepository.ts]
+        Repositories --> PR[PostRepository.ts]
+        Repositories --> WR[WowRepository.ts]
+    end
     
-    Services --> US[UserService.ts]
-    Services --> PS[PostService.ts]
-    Services --> WS[WowService.ts]
-    Services --> CS[CategoryService.ts]
+    Tests --> FrontendTests[frontend/]
+    Tests --> BackendTests[backend/]
     
-    Repositories --> UR[UserRepository.ts]
-    Repositories --> PR[PostRepository.ts]
-    Repositories --> WR[WowRepository.ts]
-    Repositories --> CR[CategoryRepository.ts]
+    FrontendTests --> UnitTests[unit/]
+    FrontendTests --> ComponentTests[component/]
+    FrontendTests --> E2ETests[e2e/]
     
-    Models --> UserModel[User.ts]
-    Models --> PostModel[Post.ts]
-    Models --> WowModel[Wow.ts]
-    Models --> CategoryModel[Category.ts]
-    
-    Database --> Connection[connection.ts]
-    Database --> Migrations[migrations/]
-    Database --> Seeds[seeds/]
-    
-    Middleware --> Auth[auth.ts]
-    Middleware --> Validation[validation.ts]
-    
-    Routes --> UserRoutes[userRoutes.ts]
-    Routes --> PostRoutes[postRoutes.ts]
-    Routes --> WowRoutes[wowRoutes.ts]
-    
-    Utils --> Helpers[helpers.ts]
-    
-    Public --> CSS[css/]
-    Public --> JS[js/]
-    Public --> Images[images/]
-    
-    Views --> Layout[layout/]
-    Views --> User[user/]
-    Views --> Post[post/]
-    Views --> Components[components/]
-    
-    Tests --> Unit[unit/]
-    Tests --> Integration[integration/]
+    BackendTests --> BackendUnitTests[unit/]
+    BackendTests --> IntegrationTests[integration/]
 ```
 
 ### 3.2 詳細目錄結構
@@ -214,53 +265,124 @@ aotter-wow-system/
 ├── package.json
 ├── tsconfig.json
 ├── vite.config.ts
-├── src/
-│   ├── controllers/          # 控制器層
-│   │   ├── UserController.ts
-│   │   ├── PostController.ts
-│   │   ├── WowController.ts
-│   │   └── CategoryController.ts
-│   ├── services/            # 服務層
-│   │   ├── UserService.ts
-│   │   ├── PostService.ts
-│   │   ├── WowService.ts
-│   │   └── CategoryService.ts
-│   ├── repositories/        # 資料存取層
-│   │   ├── UserRepository.ts
-│   │   ├── PostRepository.ts
-│   │   ├── WowRepository.ts
-│   │   └── CategoryRepository.ts
-│   ├── models/             # 領域模型
-│   │   ├── User.ts
-│   │   ├── Post.ts
-│   │   ├── Wow.ts
-│   │   └── Category.ts
-│   ├── database/           # 資料庫相關
-│   │   ├── connection.ts
-│   │   ├── migrations/
-│   │   └── seeds/
-│   ├── middleware/         # 中介軟體
-│   │   ├── auth.ts
-│   │   └── validation.ts
-│   ├── routes/            # 路由定義
-│   │   ├── userRoutes.ts
-│   │   ├── postRoutes.ts
-│   │   └── wowRoutes.ts
-│   ├── utils/             # 工具函數
-│   │   └── helpers.ts
-│   └── app.ts             # 應用程式進入點
-├── public/                # 靜態檔案
-│   ├── css/
-│   ├── js/
-│   └── images/
-├── views/                 # 頁面模板
-│   ├── layout/
-│   ├── user/
-│   ├── post/
-│   └── components/
-└── tests/                # 測試檔案
-    ├── unit/
-    └── integration/
+├── tailwind.config.js
+├── postcss.config.js
+├── frontend/                # Vue.js 前端應用
+│   ├── package.json
+│   ├── vite.config.ts
+│   ├── tsconfig.json
+│   ├── index.html
+│   ├── src/
+│   │   ├── main.ts
+│   │   ├── App.vue
+│   │   ├── components/     # Vue 元件
+│   │   │   ├── common/
+│   │   │   │   ├── Header.vue
+│   │   │   │   ├── Footer.vue
+│   │   │   │   └── Navigation.vue
+│   │   │   ├── user/
+│   │   │   │   ├── LoginForm.vue
+│   │   │   │   ├── RegisterForm.vue
+│   │   │   │   └── UserProfile.vue
+│   │   │   ├── post/
+│   │   │   │   ├── PostCard.vue
+│   │   │   │   ├── PostForm.vue
+│   │   │   │   ├── PostList.vue
+│   │   │   │   └── PostDetail.vue
+│   │   │   └── wow/
+│   │   │       ├── WowButton.vue
+│   │   │       ├── WowCounter.vue
+│   │   │       └── WowLeaderboard.vue
+│   │   ├── views/          # 頁面視圖
+│   │   │   ├── Home.vue
+│   │   │   ├── Login.vue
+│   │   │   ├── Register.vue
+│   │   │   ├── Posts.vue
+│   │   │   ├── PostDetail.vue
+│   │   │   ├── Profile.vue
+│   │   │   ├── Leaderboard.vue
+│   │   │   └── Admin.vue
+│   │   ├── composables/    # Vue 組合式函數
+│   │   │   ├── useAuth.ts
+│   │   │   ├── useUser.ts
+│   │   │   ├── usePost.ts
+│   │   │   ├── useWow.ts
+│   │   │   └── useApi.ts
+│   │   ├── stores/         # Pinia 狀態管理
+│   │   │   ├── auth.ts
+│   │   │   ├── user.ts
+│   │   │   ├── post.ts
+│   │   │   └── wow.ts
+│   │   ├── router/         # Vue Router
+│   │   │   └── index.ts
+│   │   ├── types/          # TypeScript 型別定義
+│   │   │   ├── auth.ts
+│   │   │   ├── user.ts
+│   │   │   ├── post.ts
+│   │   │   └── api.ts
+│   │   ├── utils/          # 工具函數
+│   │   │   ├── api.ts
+│   │   │   ├── format.ts
+│   │   │   └── validation.ts
+│   │   └── assets/         # 靜態資源
+│   │       ├── css/
+│   │       │   └── main.css
+│   │       └── images/
+│   └── public/             # 公共靜態檔案
+│       ├── favicon.ico
+│       └── images/
+├── backend/                # Node.js 後端應用
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── src/
+│   │   ├── controllers/    # 控制器層
+│   │   │   ├── UserController.ts
+│   │   │   ├── PostController.ts
+│   │   │   ├── WowController.ts
+│   │   │   └── CategoryController.ts
+│   │   ├── services/       # 服務層
+│   │   │   ├── UserService.ts
+│   │   │   ├── PostService.ts
+│   │   │   ├── WowService.ts
+│   │   │   └── CategoryService.ts
+│   │   ├── repositories/   # 資料存取層
+│   │   │   ├── UserRepository.ts
+│   │   │   ├── PostRepository.ts
+│   │   │   ├── WowRepository.ts
+│   │   │   └── CategoryRepository.ts
+│   │   ├── models/         # 領域模型
+│   │   │   ├── User.ts
+│   │   │   ├── Post.ts
+│   │   │   ├── Wow.ts
+│   │   │   └── Category.ts
+│   │   ├── database/       # 資料庫相關
+│   │   │   ├── connection.ts
+│   │   │   ├── migrations/
+│   │   │   └── seeds/
+│   │   ├── middleware/     # 中介軟體
+│   │   │   ├── auth.ts
+│   │   │   ├── validation.ts
+│   │   │   └── cors.ts
+│   │   ├── routes/         # 路由定義
+│   │   │   ├── userRoutes.ts
+│   │   │   ├── postRoutes.ts
+│   │   │   └── wowRoutes.ts
+│   │   ├── types/          # TypeScript 型別定義
+│   │   │   ├── express.ts
+│   │   │   └── database.ts
+│   │   ├── utils/          # 工具函數
+│   │   │   └── helpers.ts
+│   │   └── app.ts          # 應用程式進入點
+│   └── database/           # SQLite 資料庫檔案
+│       └── aotter-wow.db
+└── tests/                  # 測試檔案
+    ├── frontend/           # 前端測試
+    │   ├── unit/
+    │   ├── component/
+    │   └── e2e/
+    └── backend/            # 後端測試
+        ├── unit/
+        └── integration/
 ```
 
 ## 4. API 設計

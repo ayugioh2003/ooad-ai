@@ -83,12 +83,19 @@
 
 ```mermaid
 flowchart TD
-    subgraph "前端層"
+    subgraph "前端層 (Vue.js + Tailwind CSS)"
         UI[使用者介面]
-        subgraph "前端技術"
-            HTML[HTML5]
-            CSS[CSS3 + Bootstrap]
-            JS[JavaScript/TypeScript]
+        subgraph "前端技術棧"
+            Vue[Vue.js 3 + TypeScript]
+            Tailwind[Tailwind CSS]
+            Vite[Vite 建置工具]
+        end
+        
+        subgraph "Vue.js 架構"
+            Components[Components<br/>元件]
+            Composables[Composables<br/>組合式函數]
+            Stores[Pinia Stores<br/>狀態管理]
+            Router[Vue Router<br/>路由]
         end
     end
     
@@ -118,7 +125,13 @@ flowchart TD
     end
     
     %% 連接關係
-    UI -.->|HTTP API| Controllers
+    UI --> Vue
+    Vue --> Components
+    Vue --> Composables
+    Vue --> Stores
+    Vue --> Router
+    
+    Composables -.->|HTTP API| Controllers
     Controllers --> Services
     Services --> Repositories
     Services --> Models
@@ -134,10 +147,14 @@ flowchart TD
 ## 📊 關鍵設計決策
 
 ### 技術決策
-1. **資料庫**: 選擇 SQLite - 適合 Demo，輕量級，無需額外安裝
-2. **後端**: Node.js + TypeScript - 型別安全，開發效率高
-3. **前端**: 傳統 MVC - 簡單直接，適合小型專案
-4. **認證**: Session-based - 比 JWT 簡單，適合 Demo
+
+1. **前端框架**: 選擇 Vue.js 3 + TypeScript - 現代響應式框架，開發效率高
+2. **CSS 框架**: 選擇 Tailwind CSS - 實用優先，快速樣式開發
+3. **建置工具**: 選擇 Vite - 快速開發伺服器，優化建置流程
+4. **資料庫**: 選擇 SQLite - 適合 Demo，輕量級，無需額外安裝
+5. **後端技術**: Node.js + Express + TypeScript - 全棧 TypeScript 開發
+6. **狀態管理**: Pinia - Vue.js 官方推薦的狀態管理方案
+7. **認證**: Session-based - 比 JWT 簡單，適合 Demo
 
 ### 業務規則決策
 1. **Wow 唯一性**: 每個使用者對同一貼文只能給一次 Wow
@@ -148,10 +165,12 @@ flowchart TD
 ## 🚀 接下來的步驟
 
 ### 第一階段：基礎實作
+
 1. **專案初始化**
-   - 建立 Node.js 專案
-   - 安裝必要套件
-   - 設定 TypeScript 和 ESLint
+   - 建立 Vue.js + Node.js 全端專案
+   - 設定 TypeScript 配置
+   - 配置 Tailwind CSS 和 Vite
+   - 安裝必要套件（Vue Router, Pinia, Express, SQLite）
 
 2. **資料庫設定**
    - 建立 SQLite 資料庫
@@ -159,9 +178,9 @@ flowchart TD
    - 準備測試資料
 
 3. **核心功能實作**
-   - 使用者註冊/登入
-   - 貼文 CRUD 功能
-   - Wow 評價系統
+   - 使用者註冊/登入 (Vue 表單 + Node.js API)
+   - 貼文 CRUD 功能 (Vue 元件 + RESTful API)
+   - Wow 評價系統 (響應式互動元件)
 
 ### 第二階段：功能完善
 1. **進階功能**

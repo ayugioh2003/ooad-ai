@@ -21,7 +21,7 @@ flowchart LR
     end
     
     %% 系統邊界與功能分組 (橫向排列)
-    subgraph System ["🌟 Aotter-Wow 評價網站系統"]
+    subgraph System ["🌟 Aotter-Wow System"]
         direction LR
         
         %% 第一排功能模組

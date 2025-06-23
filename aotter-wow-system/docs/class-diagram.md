@@ -10,6 +10,9 @@
 
 ```mermaid
 classDiagram
+    direction LR
+    
+    %% 左側：使用者相關類別
     class User {
         -id: number
         -username: string
@@ -19,13 +22,20 @@ classDiagram
         -joinDate: Date
         -createdAt: Date
         -updatedAt: Date
-        +constructor(username: string, email: string, password: string)
-        +validatePassword(password: string): boolean
+        +constructor(username, email, password)
+        +validatePassword(password): boolean
         +isAdmin(): boolean
         +getProfile(): UserProfile
-        +updateProfile(profile: UserProfile): void
+        +updateProfile(profile): void
     }
 
+    class UserType {
+        <<enumeration>>
+        USER
+        ADMIN
+    }
+
+    %% 中間：內容相關類別
     class Post {
         -id: number
         -title: string
@@ -36,11 +46,11 @@ classDiagram
         -publishDate: Date
         -createdAt: Date
         -updatedAt: Date
-        +constructor(title: string, content: string, authorId: number, categoryId: number)
+        +constructor(title, content, authorId, categoryId)
         +validate(): boolean
         +incrementWowCount(): void
         +getWowCount(): number
-        +isAuthor(userId: number): boolean
+        +isAuthor(userId): boolean
         +getSummary(): string
     }
 
@@ -49,33 +59,29 @@ classDiagram
         -name: string
         -description: string
         -createdAt: Date
-        +constructor(name: string, description: string)
+        +constructor(name, description)
         +validate(): boolean
         +getPostCount(): number
     }
 
+    %% 右側：評價相關類別
     class Wow {
         -id: number
         -userId: number
         -postId: number
         -wowDate: Date
-        +constructor(userId: number, postId: number)
+        +constructor(userId, postId)
         +validate(): boolean
-        +isValidCombination(userId: number, postId: number): boolean
+        +isValidCombination(userId, postId): boolean
     }
 
-    class UserType {
-        <<enumeration>>
-        USER
-        ADMIN
-    }
-
-    %% 關係
-    User "1" -- "0..*" Post : "authors"
-    User "1" -- "0..*" Wow : "gives"
-    Post "1" -- "0..*" Wow : "receives"
-    Category "1" -- "0..*" Post : "categorizes"
-    User "1" -- "1" UserType : "has_type"
+    %% 關係定義（橫向排列）
+    User "1" --o "1" UserType : has_type
+    User "1" --o "0..*" Post : authors
+    User "1" --o "0..*" Wow : gives
+    
+    Category "1" --o "0..*" Post : categorizes
+    Post "1" --o "0..*" Wow : receives
 ```
 
 ### 2.2 值物件類別

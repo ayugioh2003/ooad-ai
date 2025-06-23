@@ -11,93 +11,172 @@
 ### 使用案例圖
 
 ```mermaid
-flowchart TD
-    %% 參與者
-    Guest[("訪客<br/>Guest")]
-    User[("一般使用者<br/>User")]
-    Admin[("管理員<br/>Admin")]
+flowchart LR
+    %% 參與者定義 (左側)
+    subgraph Actors ["👥 系統參與者"]
+        direction TB
+        Guest[("👤 訪客<br/>Guest")]
+        User[("👨‍💼 一般使用者<br/>User")]
+        Admin[("👨‍💻 管理員<br/>Admin")]
+    end
     
-    %% 使用案例
-    UC001(("UC-001<br/>使用者註冊"))
-    UC002(("UC-002<br/>使用者登入"))
-    UC003(("UC-003<br/>使用者登出"))
-    UC004(("UC-004<br/>查看個人資料"))
-    UC005(("UC-005<br/>發布貼文"))
-    UC006(("UC-006<br/>編輯貼文"))
-    UC007(("UC-007<br/>刪除貼文"))
-    UC008(("UC-008<br/>瀏覽貼文"))
-    UC009(("UC-009<br/>給予 Wow 評價"))
-    UC010(("UC-010<br/>查看 Wow 統計"))
-    UC011(("UC-011<br/>搜尋貼文"))
-    UC012(("UC-012<br/>查看 Wow 排行榜"))
-    UC013(("UC-013<br/>依類別瀏覽"))
-    UC014(("UC-014<br/>管理不當內容"))
-    UC015(("UC-015<br/>查看系統統計"))
+    %% 系統邊界與功能分組 (橫向排列)
+    subgraph System ["🌟 Aotter-Wow 評價網站系統"]
+        direction LR
+        
+        %% 第一排功能模組
+        subgraph Row1 ["上層功能"]
+            direction LR
+            
+            subgraph Auth ["🔐 認證管理"]
+                direction TB
+                UC001(("UC-001<br/>註冊"))
+                UC002(("UC-002<br/>登入"))
+                UC003(("UC-003<br/>登出"))
+                UC004(("UC-004<br/>個人資料"))
+            end
+            
+            subgraph Content ["📝 內容管理"]
+                direction TB
+                UC005(("UC-005<br/>發布貼文"))
+                UC006(("UC-006<br/>編輯貼文"))
+                UC007(("UC-007<br/>刪除貼文"))
+            end
+        end
+        
+        %% 第二排功能模組
+        subgraph Row2 ["下層功能"]
+            direction LR
+            
+            subgraph Browse ["🔍 內容瀏覽"]
+                direction TB
+                UC008(("UC-008<br/>瀏覽貼文"))
+                UC011(("UC-011<br/>搜尋貼文"))
+                UC013(("UC-013<br/>類別瀏覽"))
+            end
+            
+            subgraph Rating ["⭐ 評價系統"]
+                direction TB
+                UC009(("UC-009<br/>Wow評價"))
+                UC010(("UC-010<br/>Wow統計"))
+                UC012(("UC-012<br/>排行榜"))
+            end
+            
+            subgraph Management ["⚙️ 系統管理"]
+                direction TB
+                UC014(("UC-014<br/>管理內容"))
+                UC015(("UC-015<br/>系統統計"))
+            end
+        end
+    end
     
-    %% 訪客的使用案例
-    Guest --- UC001
-    Guest --- UC008
-    Guest --- UC012
-    Guest --- UC013
+    %% 參與者與功能的連接 (簡化線條)
+    Actors -.-> Auth
+    Actors -.-> Browse
     
-    %% 一般使用者的使用案例
-    User --- UC002
-    User --- UC003
-    User --- UC004
-    User --- UC005
-    User --- UC006
-    User --- UC007
-    User --- UC008
-    User --- UC009
-    User --- UC010
-    User --- UC011
-    User --- UC012
-    User --- UC013
+    User -.-> Content
+    User -.-> Rating
     
-    %% 管理員的使用案例 (繼承一般使用者)
-    Admin --- UC002
-    Admin --- UC003
-    Admin --- UC004
-    Admin --- UC005
-    Admin --- UC006
-    Admin --- UC007
-    Admin --- UC008
-    Admin --- UC009
-    Admin --- UC010
-    Admin --- UC011
-    Admin --- UC012
-    Admin --- UC013
-    Admin --- UC014
-    Admin --- UC015
+    Admin -.-> Management
     
-    %% 包含關係
-    UC005 -.->|include| UC002
-    UC009 -.->|include| UC002
-    UC006 -.->|include| UC002
-    UC007 -.->|include| UC002
+    %% 重要的包含關係
+    Content -.->|需要登入| Auth
+    Rating -.->|需要登入| Auth
+    Management -.->|需要登入| Auth
     
     %% 擴展關係
-    UC009 -.->|extend| UC008
-    UC008 -.->|extend| UC012
-    
-    %% 系統邊界
-    subgraph "Aotter-Wow 評價網站系統"
-        UC001
-        UC002
-        UC003
-        UC004
-        UC005
-        UC006
-        UC007
-        UC008
-        UC009
-        UC010
-        UC011
-        UC012
-        UC013
-        UC014
-        UC015
+    Rating -.->|擴展| Browse
+```
+
+### 分層使用案例圖（按角色分組）
+
+```mermaid
+flowchart TB
+    %% 角色層級
+    subgraph Roles ["👥 系統參與者"]
+        Guest[("👤 訪客")]
+        User[("👨‍💼 使用者")]
+        Admin[("👨‍💻 管理員")]
     end
+    
+    %% 訪客功能層
+    subgraph GuestLayer ["🔓 訪客功能"]
+        GUC001[("註冊帳號")]
+        GUC008[("瀏覽貼文")]
+        GUC012[("查看排行榜")]
+        GUC013[("類別瀏覽")]
+    end
+    
+    %% 使用者功能層
+    subgraph UserLayer ["🔐 使用者功能"]
+        UUC002[("登入")]
+        UUC003[("登出")]
+        UUC004[("個人資料")]
+        UUC005[("發布貼文")]
+        UUC006[("編輯貼文")]
+        UUC007[("刪除貼文")]
+        UUC009[("給予 Wow")]
+        UUC010[("Wow 統計")]
+        UUC011[("搜尋貼文")]
+    end
+    
+    %% 管理員功能層
+    subgraph AdminLayer ["⚙️ 管理員功能"]
+        AUC014[("管理內容")]
+        AUC015[("系統統計")]
+    end
+    
+    %% 角色關聯
+    Guest -.-> GuestLayer
+    User -.-> UserLayer
+    User -.-> GuestLayer
+    Admin -.-> AdminLayer
+    Admin -.-> UserLayer
+    Admin -.-> GuestLayer
+    
+    %% 依賴關係
+    UUC005 -.->|需要| UUC002
+    UUC006 -.->|需要| UUC002
+    UUC007 -.->|需要| UUC002
+    UUC009 -.->|需要| UUC002
+```
+
+### 功能模組互動圖
+
+```mermaid
+flowchart TD
+    %% 核心模組
+    subgraph Core ["核心系統模組"]
+        AuthModule[("🔐<br/>認證模組")]
+        ContentModule[("📝<br/>內容模組")]
+        RatingModule[("⭐<br/>評價模組")]
+        SearchModule[("🔍<br/>搜尋模組")]
+        AdminModule[("⚙️<br/>管理模組")]
+    end
+    
+    %% 使用者類型
+    Guest[("訪客")]
+    RegularUser[("一般使用者")]
+    Administrator[("管理員")]
+    
+    %% 直接存取關係
+    Guest --> SearchModule
+    Guest --> AuthModule
+    
+    RegularUser --> AuthModule
+    RegularUser --> ContentModule
+    RegularUser --> RatingModule
+    RegularUser --> SearchModule
+    
+    Administrator --> AdminModule
+    Administrator --> AuthModule
+    
+    %% 模組間依賴
+    ContentModule -.-> AuthModule
+    RatingModule -.-> AuthModule
+    RatingModule -.-> ContentModule
+    AdminModule -.-> AuthModule
+    SearchModule -.-> ContentModule
 ```
 
 ## 2. 使用案例列表

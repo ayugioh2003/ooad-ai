@@ -7,16 +7,17 @@
 
 ### 1.2 技術選型
 
-**前端技術**
+**全端框架**
 
-- Vue.js 3 (現代前端框架)
+- Nuxt.js 3 (Vue.js 全端框架)
 - TypeScript (型別安全)
 - Tailwind CSS (實用優先的 CSS 框架)
-- Vite (快速建置工具)
+- Vite (快速建置工具，內建於 Nuxt.js)
 
-**後端技術**  
+**後端技術 (Nuxt.js Server)**
 
-- Node.js + Express.js (Web 框架)
+- Nuxt.js Server API (伺服器端 API)
+- H3 (高效能 HTTP 框架，Nuxt.js 內建)
 - TypeScript (型別安全)
 - SQLite 3 (輕量級資料庫)
 - JWT (JSON Web Token) 認證
@@ -33,30 +34,21 @@
 
 ```mermaid
 flowchart TD
-    subgraph "前端應用 (Vue.js + Tailwind CSS)"
-        subgraph "Vue.js 元件"
-            App[App.vue]
-            UserComponents[使用者元件]
-            PostComponents[貼文元件]
-            WowComponents[評價元件]
-            Layout[佈局元件]
+    subgraph "Nuxt.js 全端應用"
+        subgraph "前端層 (Pages & Components)"
+            Pages[Pages<br/>頁面]
+            Components[Components<br/>元件]
+            Layouts[Layouts<br/>佈局]
+            Composables[Composables<br/>組合式函數]
         end
         
-        subgraph "Composables"
-            UserAPI[useUser]
-            PostAPI[usePost]
-            WowAPI[useWow]
-            AuthAPI[useAuth]
-        end
-    end
-    
-    subgraph "Aotter-Wow 後端系統"
-        subgraph "表現層 (Presentation Layer)"
-            UC[UserController]
-            PC[PostController]
-            WC[WowController]
-            CC[CategoryController]
-            AC[AdminController]
+        subgraph "Nuxt.js Server API Layer"
+            UserAPI["API: Users<br/>使用者 API"]
+            PostAPI["API: Posts<br/>貼文 API"]
+            WowAPI["API: Wows<br/>評價 API"]
+            CategoryAPI["API: Categories<br/>類別 API"]
+            AuthAPI["API: Auth<br/>認證 API"]
+            AdminAPI["API: Admin<br/>管理 API"]
         end
         
         subgraph "服務層 (Service Layer)"
@@ -64,6 +56,7 @@ flowchart TD
             PS[PostService]
             WS[WowService]
             CS[CategoryService]
+            AS[AuthService]
         end
         
         subgraph "資料存取層 (Repository Layer)"
@@ -76,6 +69,12 @@ flowchart TD
         subgraph "資料庫層 (Database Layer)"
             DB[(SQLite Database)]
         end
+        
+        subgraph "中介軟體 (Middleware)"
+            AuthMW[認證中介軟體]
+            ValidationMW[驗證中介軟體]
+            ErrorMW[錯誤處理中介軟體]
+        end
     end
     
     %% 外部參與者
@@ -83,35 +82,32 @@ flowchart TD
     Admin[管理員]
     Guest[訪客]
     
-    %% 前端連接
-    User --> App
-    Admin --> App
-    Guest --> App
+    %% 使用者與前端的連接
+    User --> Pages
+    Admin --> Pages
+    Guest --> Pages
     
-    App --> UserComponents
-    App --> PostComponents
-    App --> WowComponents
-    App --> Layout
+    %% 前端層內部連接
+    Pages --> Components
+    Pages --> Layouts
+    Pages --> Composables
     
-    UserComponents --> UserAPI
-    PostComponents --> PostAPI
-    WowComponents --> WowAPI
-    Layout --> AuthAPI
+    %% 前端到 API 的連接
+    Composables --> UserAPI
+    Composables --> PostAPI
+    Composables --> WowAPI
+    Composables --> AuthAPI
     
-    %% API 連接
-    UserAPI -.->|HTTP/REST API| UC
-    PostAPI -.->|HTTP/REST API| PC
-    WowAPI -.->|HTTP/REST API| WC
-    AuthAPI -.->|HTTP/REST API| UC
+    %% API 到服務層的連接
+    UserAPI --> US
+    PostAPI --> PS
+    WowAPI --> WS
+    CategoryAPI --> CS
+    AuthAPI --> AS
+    AdminAPI --> PS
+    AdminAPI --> US
     
-    %% 後端連接
-    UC --> US
-    PC --> PS
-    WC --> WS
-    CC --> CS
-    AC --> US
-    AC --> PS
-    
+    %% 服務層到資料存取層的連接
     US --> UR
     PS --> PR
     PS --> CR
@@ -119,6 +115,7 @@ flowchart TD
     WS --> PR
     CS --> CR
     
+    %% 資料存取層到資料庫的連接
     UR --> DB
     PR --> DB
     WR --> DB
@@ -183,81 +180,80 @@ flowchart TD
     Root[aotter-wow-system/]
     
     Root --> Package[package.json]
-    Root --> TSConfig[tsconfig.json]
-    Root --> ViteConfig[vite.config.ts]
+    Root --> NuxtConfig[nuxt.config.ts]
     Root --> TailwindConfig[tailwind.config.js]
-    Root --> Frontend[frontend/]
-    Root --> Backend[backend/]
+    Root --> TSConfig[tsconfig.json]
     Root --> Tests[tests/]
     
-    subgraph "前端 Vue.js 應用"
-        Frontend --> FrontendSrc[src/]
-        Frontend --> FrontendPublic[public/]
+    subgraph "Nuxt.js 全端應用結構"
+        Root --> Pages[pages/]
+        Root --> Components[components/]
+        Root --> Layouts[layouts/]
+        Root --> Composables[composables/]
+        Root --> Server[server/]
+        Root --> Assets[assets/]
+        Root --> Public[public/]
+        Root --> Types[types/]
+        Root --> Utils[utils/]
+        Root --> Plugins[plugins/]
+        Root --> Middleware[middleware/]
         
-        FrontendSrc --> Components[components/]
-        FrontendSrc --> Views[views/]
-        FrontendSrc --> Composables[composables/]
-        FrontendSrc --> Stores[stores/]
-        FrontendSrc --> Router[router/]
-        FrontendSrc --> FrontendTypes[types/]
-        FrontendSrc --> FrontendUtils[utils/]
+        subgraph "前端頁面與元件"
+            Pages --> IndexPage[index.vue]
+            Pages --> LoginPage[login.vue]
+            Pages --> PostsPage[posts/]
+            Pages --> ProfilePage[profile.vue]
+            Pages --> AdminPage[admin/]
+            
+            Components --> CommonComponents[common/]
+            Components --> UserComponents[user/]
+            Components --> PostComponents[post/]
+            Components --> WowComponents[wow/]
+            
+            Layouts --> DefaultLayout[default.vue]
+            Layouts --> AdminLayout[admin.vue]
+            
+            Composables --> UseAuth[useAuth.ts]
+            Composables --> UseUser[useUser.ts]
+            Composables --> UsePost[usePost.ts]
+            Composables --> UseWow[useWow.ts]
+        end
         
-        Components --> CommonComponents[common/]
-        Components --> UserComponents[user/]
-        Components --> PostComponents[post/]
-        Components --> WowComponents[wow/]
-        
-        Views --> HomeView[Home.vue]
-        Views --> LoginView[Login.vue]
-        Views --> PostsView[Posts.vue]
-        Views --> ProfileView[Profile.vue]
-        
-        Composables --> UseAuth[useAuth.ts]
-        Composables --> UseUser[useUser.ts]
-        Composables --> UsePost[usePost.ts]
-        Composables --> UseWow[useWow.ts]
-        
-        Stores --> AuthStore[auth.ts]
-        Stores --> UserStore[user.ts]
-        Stores --> PostStore[post.ts]
+        subgraph "Nuxt.js Server API"
+            Server --> API[api/]
+            Server --> Services[services/]
+            Server --> Repositories[repositories/]
+            Server --> Models[models/]
+            Server --> Database[database/]
+            Server --> ServerMiddleware[middleware/]
+            Server --> ServerUtils[utils/]
+            
+            API --> UsersAPI[users/]
+            API --> PostsAPI[posts/]
+            API --> WowsAPI[wows/]
+            API --> AuthAPI[auth/]
+            API --> CategoriesAPI[categories/]
+            API --> AdminAPI[admin/]
+            
+            Services --> UserService[UserService.ts]
+            Services --> PostService[PostService.ts]
+            Services --> WowService[WowService.ts]
+            Services --> AuthService[AuthService.ts]
+            
+            Repositories --> UserRepo[UserRepository.ts]
+            Repositories --> PostRepo[PostRepository.ts]
+            Repositories --> WowRepo[WowRepository.ts]
+            Repositories --> CategoryRepo[CategoryRepository.ts]
+            
+            Database --> InitDB[init.sql]
+            Database --> SeedDB[seed.sql]
+            Database --> Migration[migrations/]
+        end
     end
     
-    subgraph "後端 Node.js 應用"
-        Backend --> BackendSrc[src/]
-        Backend --> Database[database/]
-        
-        BackendSrc --> Controllers[controllers/]
-        BackendSrc --> Services[services/]
-        BackendSrc --> Repositories[repositories/]
-        BackendSrc --> Models[models/]
-        BackendSrc --> Middleware[middleware/]
-        BackendSrc --> Routes[routes/]
-        BackendSrc --> BackendTypes[types/]
-        BackendSrc --> BackendUtils[utils/]
-        BackendSrc --> App[app.ts]
-        
-        Controllers --> UC[UserController.ts]
-        Controllers --> PC[PostController.ts]
-        Controllers --> WC[WowController.ts]
-        
-        Services --> US[UserService.ts]
-        Services --> PS[PostService.ts]
-        Services --> WS[WowService.ts]
-        
-        Repositories --> UR[UserRepository.ts]
-        Repositories --> PR[PostRepository.ts]
-        Repositories --> WR[WowRepository.ts]
-    end
-    
-    Tests --> FrontendTests[frontend/]
-    Tests --> BackendTests[backend/]
-    
-    FrontendTests --> UnitTests[unit/]
-    FrontendTests --> ComponentTests[component/]
-    FrontendTests --> E2ETests[e2e/]
-    
-    BackendTests --> BackendUnitTests[unit/]
-    BackendTests --> IntegrationTests[integration/]
+    Tests --> FrontendTests[unit/]
+    Tests --> BackendTests[component/]
+    Tests --> E2ETests[e2e/]
 ```
 
 ### 3.2 詳細目錄結構
@@ -269,142 +265,174 @@ aotter-wow-system/
 ├── vite.config.ts
 ├── tailwind.config.js
 ├── postcss.config.js
-├── frontend/                # Vue.js 前端應用
+├── pages/                   # Nuxt.js 頁面路由
+│   ├── index.vue            # 首頁
+│   ├── login.vue            # 登入頁面
+│   ├── register.vue         # 註冊頁面
+│   ├── posts/
+│   │   ├── index.vue        # 貼文列表
+│   │   └── [id].vue         # 貼文詳情
+│   ├── profile.vue          # 個人資料
+│   ├── leaderboard.vue      # 排行榜
+│   └── admin/
+│       ├── index.vue        # 管理後台首頁
+│       ├── posts.vue        # 貼文管理
+│       └── users.vue        # 使用者管理
+│
+├── components/              # Vue 元件
+│   ├── common/
+│   │   ├── AppHeader.vue
+│   │   ├── AppFooter.vue
+│   │   ├── AppNavigation.vue
+│   │   ├── Loading.vue
+│   │   └── Modal.vue
+│   ├── user/
+│   │   ├── LoginForm.vue
+│   │   ├── RegisterForm.vue
+│   │   └── UserProfile.vue
+│   ├── post/
+│   │   ├── PostCard.vue
+│   │   ├── PostForm.vue
+│   │   ├── PostList.vue
+│   │   └── PostDetail.vue
+│   └── wow/
+│       ├── WowButton.vue
+│       ├── WowCounter.vue
+│       └── WowLeaderboard.vue
+│
+├── layouts/                 # Nuxt.js 佈局
+│   ├── default.vue          # 預設佈局
+│   └── admin.vue            # 管理後台佈局
+│
+├── composables/             # Nuxt.js 組合式函數
+│   ├── useAuth.ts
+│   ├── useUser.ts
+│   ├── usePost.ts
+│   ├── useWow.ts
+│   └── useApi.ts
+│
+├── stores/                  # Pinia 狀態管理
+│   ├── auth.ts
+│   ├── user.ts
+│   ├── post.ts
+│   └── wow.ts
+│
+├── types/                   # TypeScript 型別定義
+│   ├── auth.ts
+│   ├── user.ts
+│   ├── post.ts
+│   └── api.ts
+│
+├── utils/                   # 工具函數
+│   ├── api.ts
+│   ├── format.ts
+│   └── validation.ts
+│
+├── assets/                  # 靜態資源
+│   ├── css/
+│   │   └── main.css
+│   └── images/
+│
+├── public/                  # 公共靜態檔案
+│   ├── favicon.ico
+│   └── images/
+│
+├── server/                  # Nuxt.js Server API
 │   ├── package.json
-│   ├── vite.config.ts
 │   ├── tsconfig.json
-│   ├── index.html
-│   ├── src/
-│   │   ├── main.ts
-│   │   ├── App.vue
-│   │   ├── components/     # Vue 元件
-│   │   │   ├── common/
-│   │   │   │   ├── Header.vue
-│   │   │   │   ├── Footer.vue
-│   │   │   │   └── Navigation.vue
-│   │   │   ├── user/
-│   │   │   │   ├── LoginForm.vue
-│   │   │   │   ├── RegisterForm.vue
-│   │   │   │   └── UserProfile.vue
-│   │   │   ├── post/
-│   │   │   │   ├── PostCard.vue
-│   │   │   │   ├── PostForm.vue
-│   │   │   │   ├── PostList.vue
-│   │   │   │   └── PostDetail.vue
-│   │   │   └── wow/
-│   │   │       ├── WowButton.vue
-│   │   │       ├── WowCounter.vue
-│   │   │       └── WowLeaderboard.vue
-│   │   ├── views/          # 頁面視圖
-│   │   │   ├── Home.vue
-│   │   │   ├── Login.vue
-│   │   │   ├── Register.vue
-│   │   │   ├── Posts.vue
-│   │   │   ├── PostDetail.vue
-│   │   │   ├── Profile.vue
-│   │   │   ├── Leaderboard.vue
-│   │   │   └── Admin.vue
-│   │   ├── composables/    # Vue 組合式函數
-│   │   │   ├── useAuth.ts
-│   │   │   ├── useUser.ts
-│   │   │   ├── usePost.ts
-│   │   │   ├── useWow.ts
-│   │   │   └── useApi.ts
-│   │   ├── stores/         # Pinia 狀態管理
-│   │   │   ├── auth.ts
-│   │   │   ├── user.ts
-│   │   │   ├── post.ts
-│   │   │   └── wow.ts
-│   │   ├── router/         # Vue Router
-│   │   │   └── index.ts
-│   │   ├── types/          # TypeScript 型別定義
-│   │   │   ├── auth.ts
-│   │   │   ├── user.ts
-│   │   │   ├── post.ts
-│   │   │   └── api.ts
-│   │   ├── utils/          # 工具函數
-│   │   │   ├── api.ts
-│   │   │   ├── format.ts
-│   │   │   └── validation.ts
-│   │   └── assets/         # 靜態資源
-│   │       ├── css/
-│   │       │   └── main.css
-│   │       └── images/
-│   └── public/             # 公共靜態檔案
-│       ├── favicon.ico
-│       └── images/
-├── backend/                # Node.js 後端應用
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── src/
-│   │   ├── controllers/    # 控制器層
-│   │   │   ├── UserController.ts
-│   │   │   ├── PostController.ts
-│   │   │   ├── WowController.ts
-│   │   │   └── CategoryController.ts
-│   │   ├── services/       # 服務層
-│   │   │   ├── UserService.ts
-│   │   │   ├── PostService.ts
-│   │   │   ├── WowService.ts
-│   │   │   └── CategoryService.ts
-│   │   ├── repositories/   # 資料存取層
-│   │   │   ├── UserRepository.ts
-│   │   │   ├── PostRepository.ts
-│   │   │   ├── WowRepository.ts
-│   │   │   └── CategoryRepository.ts
-│   │   ├── models/         # 領域模型
-│   │   │   ├── User.ts
-│   │   │   ├── Post.ts
-│   │   │   ├── Wow.ts
-│   │   │   └── Category.ts
-│   │   ├── database/       # 資料庫相關
-│   │   │   ├── connection.ts
-│   │   │   ├── migrations/
-│   │   │   └── seeds/
-│   │   ├── middleware/     # 中介軟體
-│   │   │   ├── auth.ts
-│   │   │   ├── validation.ts
-│   │   │   └── cors.ts
-│   │   ├── routes/         # 路由定義
-│   │   │   ├── userRoutes.ts
-│   │   │   ├── postRoutes.ts
-│   │   │   └── wowRoutes.ts
-│   │   ├── types/          # TypeScript 型別定義
-│   │   │   ├── express.ts
-│   │   │   └── database.ts
-│   │   ├── utils/          # 工具函數
-│   │   │   └── helpers.ts
-│   │   └── app.ts          # 應用程式進入點
-│   └── database/           # SQLite 資料庫檔案
-│       └── aotter-wow.db
-└── tests/                  # 測試檔案
-    ├── frontend/           # 前端測試
-    │   ├── unit/
-    │   ├── component/
-    │   └── e2e/
-    └── backend/            # 後端測試
-        ├── unit/
-        └── integration/
+│   ├── api/                 # Nuxt.js Server API 路由
+│   │   ├── users/
+│   │   │   ├── index.get.ts     # GET /api/users
+│   │   │   ├── index.post.ts    # POST /api/users (註冊)
+│   │   │   ├── [id].get.ts      # GET /api/users/:id
+│   │   │   ├── [id].put.ts      # PUT /api/users/:id
+│   │   │   └── [id].delete.ts   # DELETE /api/users/:id
+│   │   ├── auth/
+│   │   │   ├── login.post.ts    # POST /api/auth/login
+│   │   │   ├── logout.post.ts   # POST /api/auth/logout
+│   │   │   └── refresh.post.ts  # POST /api/auth/refresh
+│   │   ├── posts/
+│   │   │   ├── index.get.ts     # GET /api/posts
+│   │   │   ├── index.post.ts    # POST /api/posts
+│   │   │   ├── [id].get.ts      # GET /api/posts/:id
+│   │   │   ├── [id].put.ts      # PUT /api/posts/:id
+│   │   │   └── [id].delete.ts   # DELETE /api/posts/:id
+│   │   ├── wows/
+│   │   │   ├── index.post.ts    # POST /api/wows
+│   │   │   └── [id].delete.ts   # DELETE /api/wows/:id
+│   │   ├── categories/
+│   │   │   ├── index.get.ts     # GET /api/categories
+│   │   │   └── index.post.ts    # POST /api/categories
+│   │   └── leaderboard/
+│   │       └── index.get.ts     # GET /api/leaderboard
+│   │
+│   ├── services/            # 服務層
+│   │   ├── UserService.ts
+│   │   ├── PostService.ts
+│   │   ├── WowService.ts
+│   │   └── CategoryService.ts
+│   │
+│   ├── repositories/        # 資料存取層
+│   │   ├── UserRepository.ts
+│   │   ├── PostRepository.ts
+│   │   ├── WowRepository.ts
+│   │   └── CategoryRepository.ts
+│   │
+│   ├── models/              # 領域模型
+│   │   ├── User.ts
+│   │   ├── Post.ts
+│   │   ├── Wow.ts
+│   │   └── Category.ts
+│   │
+│   ├── database/            # 資料庫相關
+│   │   ├── connection.ts
+│   │   ├── migrations/
+│   │   └── seeds/
+│   │
+│   └── middleware/          # Server 中介軟體
+│       ├── auth.ts
+│       ├── validation.ts
+│       └── cors.ts
+│
+├── middleware/              # Nuxt.js 路由中介軟體
+│   ├── auth.ts              # 身份驗證中介軟體
+│   └── admin.ts             # 管理員權限中介軟體
+│
+├── plugins/                 # Nuxt.js 插件
+│   ├── api.client.ts        # API 客戶端
+│   └── auth.client.ts       # 認證插件
+│
+├── database/                # SQLite 資料庫檔案
+│   └── aotter-wow.db
+│
+└── tests/                   # 測試檔案
+    ├── unit/                # 單元測試
+    ├── component/           # 元件測試
+    └── e2e/                 # 端對端測試
 ```
 
 ## 4. API 設計
 
-### 4.1 RESTful API 端點
+### 4.1 Nuxt.js Server API 端點
 
-**使用者相關**
+**使用者相關 (server/api/users/)**
 ```
-POST   /api/users/register     # 使用者註冊
-POST   /api/users/login        # 使用者登入  
-POST   /api/auth/refresh       # 刷新 JWT Token
-POST   /api/users/logout       # 使用者登出 (撤銷 Refresh Token)
-GET    /api/users/profile      # 獲取個人資料 (需 Bearer Token)
-PUT    /api/users/profile      # 更新個人資料 (需 Bearer Token)
+POST   /api/users/register.post.ts     # 使用者註冊
+GET    /api/users/profile.get.ts       # 獲取個人資料 (需認證)
+PUT    /api/users/profile.put.ts       # 更新個人資料 (需認證)
 ```
 
-**貼文相關**
+**認證相關 (server/api/auth/)**
 ```
-GET    /api/posts              # 獲取貼文列表
-POST   /api/posts              # 建立新貼文
+POST   /api/auth/login.post.ts         # 使用者登入
+POST   /api/auth/logout.post.ts        # 使用者登出
+POST   /api/auth/refresh.post.ts       # 刷新 JWT Token
+```
+
+**貼文相關 (server/api/posts/)**
+```
+GET    /api/posts/index.get.ts         # 獲取貼文列表
+POST   /api/posts/index.post.ts        # 建立新貼文
 GET    /api/posts/:id          # 獲取特定貼文
 PUT    /api/posts/:id          # 更新貼文
 DELETE /api/posts/:id          # 刪除貼文

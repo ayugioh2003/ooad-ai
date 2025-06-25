@@ -83,7 +83,7 @@
 
 ```mermaid
 flowchart TD
-    subgraph "前端層 (Vue.js + Tailwind CSS)"
+    subgraph "前端層 (Vue.js + Tailwind)"
         UI[使用者介面]
         subgraph "前端技術棧"
             Vue[Vue.js 3 + TypeScript]
@@ -99,9 +99,9 @@ flowchart TD
         end
     end
     
-    subgraph "後端系統 (Node.js + Express + TypeScript)"
-        subgraph "表現層"
-            Controllers[Controllers<br/>路由處理]
+    subgraph "Nuxt.js 全端應用 (Server + Client)"
+        subgraph "表現層 (Pages & Server API)"
+            ServerAPI[Nuxt.js Server API<br/>路由處理]
         end
         
         subgraph "業務層"
@@ -131,8 +131,8 @@ flowchart TD
     Vue --> Stores
     Vue --> Router
     
-    Composables -.->|HTTP API| Controllers
-    Controllers --> Services
+    Composables -.->|HTTP API| ServerAPI
+    ServerAPI --> Services
     Services --> Repositories
     Services --> Models
     Repositories -.->|SQL| DB
@@ -148,13 +148,13 @@ flowchart TD
 
 ### 技術決策
 
-1. **前端框架**: 選擇 Vue.js 3 + TypeScript - 現代響應式框架，開發效率高
+1. **全端框架**: 選擇 Nuxt.js 3 + TypeScript - 全端開發，SSR/SPA 支援，開發效率高
 2. **CSS 框架**: 選擇 Tailwind CSS - 實用優先，快速樣式開發
-3. **建置工具**: 選擇 Vite - 快速開發伺服器，優化建置流程
+3. **建置工具**: 內建 Vite - Nuxt.js 內建快速開發伺服器和建置工具
 4. **資料庫**: 選擇 SQLite - 適合 Demo，輕量級，無需額外安裝
-5. **後端技術**: Node.js + Express + TypeScript - 全棧 TypeScript 開發
-6. **狀態管理**: Pinia - Vue.js 官方推薦的狀態管理方案
-7. **認證**: JWT Token - 現代化無狀態認證，支援前後端分離
+5. **後端 API**: Nuxt.js Server API - 統一全端開發體驗，無需分離部署
+6. **狀態管理**: Nuxt.js 內建狀態管理 + Pinia (如需複雜狀態)
+7. **認證**: JWT Token - 現代化無狀態認證，支援 SSR 和 CSR
 
 ### 業務規則決策
 1. **Wow 唯一性**: 每個使用者對同一貼文只能給一次 Wow
@@ -173,10 +173,10 @@ flowchart TD
 ### 第一階段：基礎實作
 
 1. **專案初始化**
-   - 建立 Vue.js + Node.js 全端專案
+   - 建立 Nuxt.js 全端專案
    - 設定 TypeScript 配置
-   - 配置 Tailwind CSS 和 Vite
-   - 安裝必要套件（Vue Router, Pinia, Express, SQLite）
+   - 配置 Tailwind CSS（Nuxt.js 模組）
+   - 安裝必要套件（Pinia, SQLite）
 
 2. **資料庫設定**
    - 建立 SQLite 資料庫
@@ -184,8 +184,8 @@ flowchart TD
    - 準備測試資料
 
 3. **核心功能實作**
-   - 使用者註冊/登入 (Vue 表單 + Node.js API)
-   - 貼文 CRUD 功能 (Vue 元件 + RESTful API)
+   - 使用者註冊/登入 (Nuxt.js 頁面 + Server API)
+   - 貼文 CRUD 功能 (Vue 元件 + Nuxt.js API 路由)
    - Wow 評價系統 (響應式互動元件)
 
 ### 第二階段：功能完善
@@ -224,7 +224,7 @@ flowchart TD
 3. 管理員後台需要哪些統計資訊？
 
 ### 📱 技術偏好  
-1. 是否希望使用 Vue.js 讓前端更現代化？
+1. 是否希望使用 Nuxt.js 額外的 SSR 功能？
 2. 是否需要即時更新功能（WebSocket）？
 3. 是否需要匯出資料功能？
 

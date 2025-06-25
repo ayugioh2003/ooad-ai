@@ -372,72 +372,61 @@ classDiagram
     CategoryRepository ..|> ICategoryRepository : "implements"
 ```
 
-## 5. 控制層類別圖
+## 5. Server API 層類別圖
 
-### 5.1 控制器類別
+### 5.1 API 處理函數類別
 
 ```mermaid
 classDiagram
-    class UserController {
-        -userService: UserService
-        +constructor(userService: UserService)
-        +register(req: Request, res: Response): Promise~void~
-        +login(req: Request, res: Response): Promise~void~
-        +logout(req: Request, res: Response): Promise~void~
-        +refreshToken(req: Request, res: Response): Promise~void~
-        +getProfile(req: Request, res: Response): Promise~void~
-        +updateProfile(req: Request, res: Response): Promise~void~
-        +getUserStats(req: Request, res: Response): Promise~void~
-        -validateJWT(req: Request): User
-        -handleError(res: Response, error: Error): void
+    class UserApiHandler {
+        +registerUser(event: H3Event): Promise~UserResponse~
+        +loginUser(event: H3Event): Promise~AuthResponse~
+        +logoutUser(event: H3Event): Promise~void~
+        +refreshToken(event: H3Event): Promise~AuthResponse~
+        +getUserProfile(event: H3Event): Promise~UserResponse~
+        +updateUserProfile(event: H3Event): Promise~UserResponse~
+        +getUserStats(event: H3Event): Promise~UserStatsResponse~
+        -validateJWT(event: H3Event): User
+        -handleApiError(error: Error): never
     }
 
-    class PostController {
-        -postService: PostService
-        +constructor(postService: PostService)
-        +createPost(req: Request, res: Response): Promise~void~
-        +getPost(req: Request, res: Response): Promise~void~
-        +getAllPosts(req: Request, res: Response): Promise~void~
-        +getPostsByCategory(req: Request, res: Response): Promise~void~
-        +getTopWowPosts(req: Request, res: Response): Promise~void~
-        +updatePost(req: Request, res: Response): Promise~void~
-        +deletePost(req: Request, res: Response): Promise~void~
-        +searchPosts(req: Request, res: Response): Promise~void~
+    class PostApiHandler {
+        +createPost(event: H3Event): Promise~PostResponse~
+        +getPost(event: H3Event): Promise~PostResponse~
+        +getAllPosts(event: H3Event): Promise~PostListResponse~
+        +getPostsByCategory(event: H3Event): Promise~PostListResponse~
+        +getTopWowPosts(event: H3Event): Promise~PostListResponse~
+        +updatePost(event: H3Event): Promise~PostResponse~
+        +deletePost(event: H3Event): Promise~void~
+        +searchPosts(event: H3Event): Promise~PostListResponse~
         -validatePostAccess(postId: number, userId: number): Promise~boolean~
-        -handleError(res: Response, error: Error): void
+        -handleApiError(error: Error): never
     }
 
-    class WowController {
-        -wowService: WowService
-        +constructor(wowService: WowService)
-        +giveWow(req: Request, res: Response): Promise~void~
-        +getWowsByPost(req: Request, res: Response): Promise~void~
-        +getWowsByUser(req: Request, res: Response): Promise~void~
-        +getWowStats(req: Request, res: Response): Promise~void~
-        -validateWowRequest(req: Request): WowRequest
-        -handleError(res: Response, error: Error): void
+    class WowApiHandler {
+        +giveWow(event: H3Event): Promise~WowResponse~
+        +getWowsByPost(event: H3Event): Promise~WowListResponse~
+        +getWowsByUser(event: H3Event): Promise~WowListResponse~
+        +getWowStats(event: H3Event): Promise~WowStatsResponse~
+        -validateWowRequest(event: H3Event): WowRequest
+        -handleApiError(error: Error): never
     }
 
-    class CategoryController {
-        -categoryService: CategoryService
-        +constructor(categoryService: CategoryService)
-        +getAllCategories(req: Request, res: Response): Promise~void~
-        +getCategory(req: Request, res: Response): Promise~void~
-        +createCategory(req: Request, res: Response): Promise~void~
-        +getCategoryStats(req: Request, res: Response): Promise~void~
-        -validateAdminAccess(req: Request): void
-        -handleError(res: Response, error: Error): void
+    class CategoryApiHandler {
+        +getAllCategories(event: H3Event): Promise~CategoryListResponse~
+        +getCategory(event: H3Event): Promise~CategoryResponse~
+        +createCategory(event: H3Event): Promise~CategoryResponse~
+        +getCategoryStats(event: H3Event): Promise~CategoryStatsResponse~
+        -validateAdminAccess(event: H3Event): void
+        -handleApiError(error: Error): never
     }
 
-    class AdminController {
-        -postService: PostService
-        -userService: UserService
-        +constructor(postService: PostService, userService: UserService)
-        +getAllPostsForAdmin(req: Request, res: Response): Promise~void~
-        +deletePost(req: Request, res: Response): Promise~void~
-        +getSystemStats(req: Request, res: Response): Promise~void~
-        +manageUser(req: Request, res: Response): Promise~void~
-        -validateAdminAccess(req: Request): void
+    class AdminApiHandler {
+        +getAllPostsForAdmin(event: H3Event): Promise~PostListResponse~
+        +deletePost(event: H3Event): Promise~void~
+        +getSystemStats(event: H3Event): Promise~SystemStatsResponse~
+        +manageUser(event: H3Event): Promise~UserResponse~
+        -validateAdminAccess(event: H3Event): void
         -handleError(res: Response, error: Error): void
     }
 
@@ -481,13 +470,12 @@ classDiagram
     }
 
     %% 依賴關係
-    UserController --> UserService : uses
-    PostController --> PostService : uses
-    WowController --> WowService : uses
-    CategoryController --> CategoryService : uses
-    AdminController --> PostService : uses
-    AdminController --> UserService : uses
-    WowController --> WowRequest : returns
+    UserApiHandler --> UserService : uses
+    PostApiHandler --> PostService : uses
+    WowApiHandler --> WowService : uses
+    CategoryApiHandler --> CategoryService : uses
+    AdminApiHandler --> PostService : uses
+    AdminApiHandler --> UserService : uses
 ```
 
 ## 6. 中介軟體類別圖
@@ -495,12 +483,12 @@ classDiagram
 ```mermaid
 classDiagram
     class AuthMiddleware {
-        +static requireAuth(req: Request, res: Response, next: NextFunction): void
-        +static requireAdmin(req: Request, res: Response, next: NextFunction): void
-        +static optionalAuth(req: Request, res: Response, next: NextFunction): void
+        +static requireAuth(event: H3Event): User
+        +static requireAdmin(event: H3Event): User
+        +static optionalAuth(event: H3Event): User | null
         -static validateJWT(token: string): User | null
-        -static extractTokenFromHeader(req: Request): string | null
-        -static sendUnauthorized(res: Response): void
+        -static extractTokenFromHeader(event: H3Event): string | null
+        -static throwUnauthorized(): never
     }
 
     class JWTService {
@@ -696,7 +684,7 @@ classDiagram
 **Single Responsibility Principle (SRP)**
 
 - 每個類別都有單一職責
-- Controller只處理HTTP相關邏輯
+- API Handler 只處理 HTTP 相關邏輯
 - Service只處理業務邏輯
 - Repository只處理資料存取
 

@@ -11,17 +11,17 @@
 ```mermaid
 sequenceDiagram
     participant User as 使用者
-    participant UI as 前端介面
-    participant UC as UserController
+    participant UI as Nuxt.js 前端
+    participant API as Server API
     participant US as UserService
     participant UR as UserRepository
     participant DB as SQLite資料庫
 
     User->>UI: 填寫註冊表單
     UI->>UI: 前端表單驗證
-    UI->>UC: POST /api/users/register
-    UC->>UC: 輸入格式驗證
-    UC->>US: registerUser(userData)
+    UI->>API: POST /api/users/register
+    API->>API: 輸入格式驗證
+    API->>US: registerUser(userData)
     US->>US: 密碼雜湊處理
     US->>UR: checkUserExists(username, email)
     UR->>DB: SELECT查詢使用者是否存在
@@ -31,9 +31,9 @@ sequenceDiagram
     UR->>DB: INSERT新使用者記錄
     DB-->>UR: 插入成功，返回userId
     UR-->>US: 創建成功
-    US-->>UC: 註冊成功
-    UC->>UC: 生成JWT Token (Access + Refresh)
-    UC-->>UI: 返回成功回應和Token
+    US-->>API: 註冊成功
+    API->>API: 生成JWT Token (Access + Refresh)
+    API-->>UI: 返回成功回應和Token
     UI-->>User: 顯示註冊成功，自動登入
 ```
 
@@ -44,29 +44,29 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant User as 使用者
-    participant UI as 前端介面
-    participant UC as UserController
+    participant UI as Nuxt.js 前端
+    participant API as Server API
     participant US as UserService
     participant UR as UserRepository
     participant DB as SQLite資料庫
 
     User->>UI: 輸入帳號密碼
-    UI->>UC: POST /api/users/login
-    UC->>UC: 輸入驗證
-    UC->>US: authenticateUser(username, password)
+    UI->>API: POST /api/auth/login
+    API->>API: 輸入驗證
+    API->>US: authenticateUser(username, password)
     US->>UR: findUserByUsername(username)
     UR->>DB: SELECT查詢使用者
     DB-->>UR: 返回使用者資料
     UR-->>US: 使用者資料
     US->>US: 驗證密碼雜湊
     alt 密碼正確
-        US-->>UC: 驗證成功，返回使用者資料
-        UC->>UC: 生成JWT Token (Access + Refresh)
-        UC-->>UI: 登入成功，返回Token
+        US-->>API: 驗證成功，返回使用者資料
+        API->>API: 生成JWT Token (Access + Refresh)
+        API-->>UI: 登入成功，返回Token
         UI-->>User: 跳轉到首頁
     else 密碼錯誤
-        US-->>UC: 驗證失敗
-        UC-->>UI: 返回錯誤訊息
+        US-->>API: 驗證失敗
+        API-->>UI: 返回錯誤訊息
         UI-->>User: 顯示登入失敗
     end
 ```
@@ -78,18 +78,18 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant User as 使用者
-    participant UI as 前端介面
-    participant PC as PostController
+    participant UI as Nuxt.js 前端
+    participant API as Server API
     participant PS as PostService
     participant PR as PostRepository
     participant CR as CategoryRepository
     participant DB as SQLite資料庫
 
     User->>UI: 填寫貼文表單
-    UI->>PC: POST /api/posts (Bearer Token)
-    PC->>PC: JWT Token驗證
-    PC->>PC: 輸入驗證
-    PC->>PS: createPost(postData, userId)
+    UI->>API: POST /api/posts (Bearer Token)
+    API->>API: JWT Token驗證
+    API->>API: 輸入驗證
+    API->>PS: createPost(postData, userId)
     PS->>CR: validateCategory(categoryId)
     CR->>DB: SELECT查詢類別是否存在
     DB-->>CR: 類別存在
@@ -99,8 +99,8 @@ sequenceDiagram
     PR->>DB: INSERT新貼文記錄
     DB-->>PR: 返回postId
     PR-->>PS: 貼文創建成功
-    PS-->>PC: 返回貼文資料
-    PC-->>UI: 返回成功回應
+    PS-->>API: 返回貼文資料
+    API-->>UI: 返回成功回應
     UI-->>User: 顯示發布成功
     UI->>UI: 跳轉到貼文詳細頁面
 ```
@@ -112,17 +112,17 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant User as 使用者
-    participant UI as 前端介面
-    participant WC as WowController
+    participant UI as Nuxt.js 前端
+    participant API as Server API
     participant WS as WowService
     participant WR as WowRepository
     participant PR as PostRepository
     participant DB as SQLite資料庫
 
     User->>UI: 點擊Wow按鈕
-    UI->>WC: POST /api/posts/:id/wow (Bearer Token)
-    WC->>WC: JWT Token驗證
-    WC->>WS: giveWow(userId, postId)
+    UI->>API: POST /api/wows (Bearer Token)
+    API->>API: JWT Token驗證
+    API->>WS: giveWow(userId, postId)
     
     par 驗證過程
         WS->>PR: getPostById(postId)
@@ -147,14 +147,14 @@ sequenceDiagram
         PR->>DB: UPDATE posts SET wow_count = wow_count + 1
         DB-->>PR: 更新成功
         PR-->>WS: 計數更新成功
-        WS-->>WC: Wow給予成功
-        WC-->>UI: 返回成功回應
+        WS-->>API: Wow給予成功
+        API-->>UI: 返回成功回應
         UI->>UI: 更新按鈕狀態為"已Wow"
         UI->>UI: 更新Wow計數顯示
         UI-->>User: 顯示操作成功
     else 驗證失敗
-        WS-->>WC: 返回錯誤訊息
-        WC-->>UI: 返回錯誤回應
+        WS-->>API: 返回錯誤訊息
+        API-->>UI: 返回錯誤回應
         UI-->>User: 顯示錯誤訊息
     end
 ```
@@ -166,22 +166,22 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant User as 使用者
-    participant UI as 前端介面
-    participant PC as PostController
+    participant UI as Nuxt.js 前端
+    participant API as Server API
     participant PS as PostService
     participant PR as PostRepository
     participant DB as SQLite資料庫
 
     User->>UI: 點擊Wow排行榜
-    UI->>PC: GET /api/posts/top-wow
-    PC->>PS: getTopWowPosts(limit, categoryId?)
+    UI->>API: GET /api/leaderboard
+    API->>PS: getTopWowPosts(limit, categoryId?)
     PS->>PR: findPostsOrderByWow(limit, categoryId)
     PR->>DB: SELECT with JOIN and ORDER BY wow_count DESC
     DB-->>PR: 排序後的貼文列表
     PR-->>PS: 貼文資料
     PS->>PS: 格式化回應資料
-    PS-->>PC: 排行榜資料
-    PC-->>UI: 返回排行榜JSON
+    PS-->>API: 排行榜資料
+    API-->>UI: 返回排行榜JSON
     UI->>UI: 渲染排行榜頁面
     UI-->>User: 顯示Wow排行榜
 
@@ -198,23 +198,23 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant User as 使用者
-    participant UI as 前端介面
-    participant PC as PostController
+    participant UI as Nuxt.js 前端
+    participant API as Server API
     participant PS as PostService
     participant PR as PostRepository
     participant DB as SQLite資料庫
 
     User->>UI: 輸入搜尋關鍵字
-    UI->>PC: GET /api/posts?search=keyword
-    PC->>PS: searchPosts(keyword, filters)
+    UI->>API: GET /api/posts?search=keyword
+    API->>PS: searchPosts(keyword, filters)
     PS->>PS: 建構搜尋條件
     PS->>PR: findPostsByKeyword(searchCriteria)
     PR->>DB: SELECT with WHERE LIKE '%keyword%'
     DB-->>PR: 符合條件的貼文
     PR-->>PS: 搜尋結果
     PS->>PS: 按相關性或Wow數排序
-    PS-->>PC: 格式化搜尋結果
-    PC-->>UI: 返回搜尋結果JSON
+    PS-->>API: 格式化搜尋結果
+    API-->>UI: 返回搜尋結果JSON
     UI->>UI: 渲染搜尋結果頁面
     UI-->>User: 顯示搜尋結果
 
@@ -231,28 +231,28 @@ sequenceDiagram
 sequenceDiagram
     participant Admin as 管理員
     participant UI as 管理介面
-    participant PC as PostController
+    participant API as Server API
     participant PS as PostService
     participant PR as PostRepository
     participant WR as WowRepository
     participant DB as SQLite資料庫
 
     Admin->>UI: 查看管理後台
-    UI->>PC: GET /api/admin/posts
-    PC->>PC: 驗證管理員權限
-    PC->>PS: getAllPostsForAdmin()
+    UI->>API: GET /api/admin/posts
+    API->>API: 驗證管理員權限
+    API->>PS: getAllPostsForAdmin()
     PS->>PR: findAllPostsWithDetails()
     PR->>DB: SELECT posts with author info
     DB-->>PR: 所有貼文資料
     PR-->>PS: 貼文列表
-    PS-->>PC: 管理用貼文列表
-    PC-->>UI: 返回貼文資料
+    PS-->>API: 管理用貼文列表
+    API-->>UI: 返回貼文資料
     UI-->>Admin: 顯示貼文管理頁面
 
     Admin->>UI: 選擇刪除特定貼文
-    UI->>PC: DELETE /api/admin/posts/:id
-    PC->>PC: 驗證管理員權限
-    PC->>PS: deletePost(postId, adminId)
+    UI->>API: DELETE /api/admin/posts/:id
+    API->>API: 驗證管理員權限
+    API->>PS: deletePost(postId, adminId)
     
     par 刪除相關資料
         PS->>WR: deleteWowsByPost(postId)
@@ -266,8 +266,8 @@ sequenceDiagram
         PR-->>PS: 貼文刪除成功
     end
     
-    PS-->>PC: 刪除操作完成
-    PC-->>UI: 返回刪除成功
+    PS-->>API: 刪除操作完成
+    API-->>UI: 返回刪除成功
     UI->>UI: 從列表中移除該貼文
     UI-->>Admin: 顯示刪除成功訊息
 ```
@@ -313,30 +313,30 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant UI as Vue.js 前端
-    participant UC as UserController
+    participant UI as Nuxt.js 前端
+    participant API as Server API
     participant JS as JWTService
     participant DB as SQLite資料庫
 
-    UI->>UC: POST /api/auth/refresh (Refresh Token in Cookie)
-    UC->>UC: 提取Refresh Token
-    UC->>JS: verifyRefreshToken(token)
+    UI->>API: POST /api/auth/refresh (Refresh Token in Cookie)
+    API->>API: 提取Refresh Token
+    API->>JS: verifyRefreshToken(token)
     JS->>JS: 驗證Token簽名和過期時間
     JS->>DB: 檢查Token是否在黑名單
     DB-->>JS: Token未被撤銷
-    JS-->>UC: Token有效，返回使用者資料
-    UC->>JS: generateAccessToken(user)
-    JS-->>UC: 新的Access Token
-    UC->>JS: generateRefreshToken(user)
-    JS-->>UC: 新的Refresh Token
-    UC->>UC: 設置新的Refresh Token Cookie
-    UC-->>UI: 返回新的Access Token
+    JS-->>API: Token有效，返回使用者資料
+    API->>JS: generateAccessToken(user)
+    JS-->>API: 新的Access Token
+    API->>JS: generateRefreshToken(user)
+    JS-->>API: 新的Refresh Token
+    API->>API: 設置新的Refresh Token Cookie
+    API-->>UI: 返回新的Access Token
     UI->>UI: 更新Pinia Store中的Token
     
     Note over UI,DB: 如果Refresh Token過期或無效
     alt Refresh Token無效
-        JS-->>UC: Token無效
-        UC-->>UI: 401 Unauthorized
+        JS-->>API: Token無效
+        API-->>UI: 401 Unauthorized
         UI->>UI: 清除本地Token
         UI->>UI: 重定向到登入頁面
     end
@@ -360,7 +360,7 @@ sequenceDiagram
 
 ### 5.1 職責分離
 每個層級都有明確的職責：
-- Controller：處理HTTP請求，驗證權限
+- Server API Handler：處理HTTP請求，驗證權限
 - Service：執行業務邏輯，協調多個Repository
 - Repository：封裝資料存取操作
 
@@ -389,5 +389,5 @@ sequenceDiagram
 有了完整的順序圖設計，我們可以：
 1. 開始詳細的程式碼實作
 2. 建立對應的測試案例
-3. 實作API端點
+3. 實作 Nuxt.js Server API 端點
 4. 建立資料庫連接和操作邏輯

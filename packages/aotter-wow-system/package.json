@@ -1,0 +1,20 @@
+{
+  "name": "aotter-wow-system",
+  "type": "module",
+  "private": true,
+  "description": "Aotter Wow System - OOAD Implementation",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo 'Build aotter-wow-system'",
+    "dev": "echo 'Dev aotter-wow-system'",
+    "clean": "echo 'Clean aotter-wow-system'",
+    "lint": "echo 'Lint aotter-wow-system'",
+    "test": "echo 'Test aotter-wow-system'"
+  },
+  "keywords": [
+    "aotter",
+    "wow",
+    "system",
+    "ooad"
+  ]
+}

@@ -11,7 +11,8 @@ export default defineNuxtConfig({
     jwtSecret: process.env.JWT_SECRET || 'your-secret-key',
     // Public keys (exposed to client-side)
     public: {
-      apiBase: '/api'
+      apiBase: '/api',
+      appName: 'Aotter Wow'
     }
   },
   nitro: {
@@ -21,5 +22,6 @@ export default defineNuxtConfig({
         base: './data'
       }
     }
-  }
+  },
+  compatibilityDate: '2025-06-26'
 })

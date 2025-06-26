@@ -52,7 +52,8 @@ export default defineEventHandler(async (event) => {
     return {
       success: true,
       data: {
-        user: result.data?.user
+        user: result.data?.user,
+        token: result.data?.token
       },
       message: result.message
     };

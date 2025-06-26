@@ -1,0 +1,8 @@
+{
+  "MarkdownPaste.path": "/assets/${fileDirname}",
+  "pasteImage.basePath": "${projectRoot}/apps/slidev-presentation",
+  "pasteImage.path": "${projectRoot}/apps/slidev-presentation/assets",
+  "pasteImage.prefix": "./",
+  "geminicodeassist.enableTelemetry": false,
+  "slidev.preview-sync": true
+}

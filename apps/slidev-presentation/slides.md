@@ -25,9 +25,9 @@ mdc: true
 #  ogImage: https://cover.sli.dev
 ---
 
-# Welcome to Slidev
+# 專案文件與 AI
 
-Presentation slides for developers
+AI 可以寫扣，那也可以寫專案開發的文件吧
 
 <div @click="$slidev.nav.next" class="mt-12 py-1" hover:bg="white op-10">
   Press Space for next page <carbon:arrow-right />
@@ -47,24 +47,19 @@ The last comment block of each slide will be treated as slide notes. It will be 
 -->
 
 ---
-transition: fade-out
----
 
-# What is Slidev?
+# 動機
 
-Slidev is a slides maker and presenter designed for developers, consist of the following features
+<div class="">
+  <img src="./assets/2025-06-25-16-48-06.png" class="w-[300px]"/>
+</div>
 
-- 📝 **Text-based** - focus on the content with Markdown, and then style them later
-- 🎨 **Themable** - themes can be shared and re-used as npm packages
-- 🧑‍💻 **Developer Friendly** - code highlighting, live coding with autocompletion
-- 🤹 **Interactive** - embed Vue components to enhance your expressions
-- 🎥 **Recording** - built-in recording and camera view
-- 📤 **Portable** - export to PDF, PPTX, PNGs, or even a hostable SPA
-- 🛠 **Hackable** - virtually anything that's possible on a webpage is possible in Slidev
-<br>
-<br>
+<br/>
 
-Read more about [Why Slidev?](https://sli.dev/guide/why)
+- 買了一堂在講 OOAD 的課
+- 本來 RD Sharing 時想手動畫圖來講
+- 但剛好公司有給 Github Copilot 的 seat
+- 那乾脆就兩個混在一起講好了，叫 A幫我幫我畫圖
 
 <!--
 You can have `style` tag in markdown to override the style for the current page.
@@ -83,556 +78,394 @@ h1 {
 }
 </style>
 
-<!--
-Here is another comment.
+---
+
+# 專案的源頭
+
+<img src="./assets/2025-06-26-17-13-07.png" class="w-[300px]" />
+
+甲方/老闆：我想要某個東西，
+需求、畫面、程式你都要做好。
+東西明天給我，OK 吧
+
+我：...
+
+---
+
+# 軟體開發的流程
+
+```mermaid
+flowchart RL
+  subgraph 設計端
+    A[需求蒐集] --> B[需求分析]
+    B --> C[系統分析]
+    C --> D[系統設計]
+  end
+
+  subgraph 程式開發端
+    E[程式撰寫] --> F[測試]
+    F --> G[上線部署]
+  end
+
+  D -- 設計文件/規格書 --> E
+```
+
+<div class="flex justify-end" v-click>
+  <img src="./assets/2025-06-25-18-40-56.png" class="w-[500px]"/>
+</div>
+
+---
+
+# 領取 ~~隕石~~ 任務
+
+<img src="./assets/2025-06-26-17-30-49.png" class="w-[300px]" />
+
+老闆：我尾牙猜題活動不小心給錯選項，研發部明年生出一個 Aotter Wow 系統可以吧
+
+研發部：...
+
+---
+
+# 概念發想
+
+能讓使用者發出 Wow 的驚嘆
+
+- 本來想做個可愛動物園系統，讓使用者看到都能 Wow
+- 但想不到要怎麼做成程式
+- 就魔轉成評價系統，讓使用者可以按 Wow
+
+---
+
+# 名詞介紹
+
+- USE CASE
+- OO / OOP
+- OOAD
+
+---
+
+# Use Case
+
+<div class="w-[650px]">
+
+
+```mermaid
+flowchart LR
+    %% 參與者定義 (左側)
+    subgraph Actors ["👥 系統參與者"]
+        direction TB
+        Guest[("👤 訪客<br/>Guest")]
+        User[("👨‍💼 一般使用者<br/>User")]
+        Admin[("👨‍💻 管理員<br/>Admin")]
+    end
+    
+    %% 系統邊界與功能分組 (橫向排列)
+    subgraph System ["🌟 Aotter-Wow System"]
+        direction LR
+        
+        %% 第一排功能模組
+        subgraph Row1 ["上層功能"]
+            direction LR
+            
+            subgraph Auth ["🔐 認證管理"]
+                direction TB
+                UC001(("UC-001<br/>註冊"))
+                UC002(("UC-002<br/>登入"))
+                UC003(("UC-003<br/>登出"))
+                UC004(("UC-004<br/>個人資料"))
+            end
+            
+            subgraph Content ["📝 內容管理"]
+                direction TB
+                UC005(("UC-005<br/>發布貼文"))
+                UC006(("UC-006<br/>編輯貼文"))
+                UC007(("UC-007<br/>刪除貼文"))
+            end
+        end
+        
+        %% 第二排功能模組
+        subgraph Row2 ["下層功能"]
+            direction LR
+            
+            subgraph Browse ["🔍 內容瀏覽"]
+                direction TB
+                UC008(("UC-008<br/>瀏覽貼文"))
+                UC011(("UC-011<br/>搜尋貼文"))
+                UC013(("UC-013<br/>類別瀏覽"))
+            end
+            
+            subgraph Rating ["⭐ 評價系統"]
+                direction TB
+                UC009(("UC-009<br/>Wow評價"))
+                UC010(("UC-010<br/>Wow統計"))
+                UC012(("UC-012<br/>排行榜"))
+            end
+            
+            subgraph Management ["⚙️ 系統管理"]
+                direction TB
+                UC014(("UC-014<br/>管理內容"))
+                UC015(("UC-015<br/>系統統計"))
+            end
+        end
+    end
+    
+    %% 參與者與功能的連接 (簡化線條)
+    Actors -.-> Auth
+    Actors -.-> Browse
+    
+    User -.-> Content
+    User -.-> Rating
+    
+    Admin -.-> Management
+    
+    %% 重要的包含關係
+    Content -.->|需要登入| Auth
+    Rating -.->|需要登入| Auth
+    Management -.->|需要登入| Auth
+    
+    %% 擴展關係
+    Rating -.->|擴展| Browse
+```
+
+
+</div>
+---
+
+# OO
+
+名人講 OO
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/BQtROdysZwc?si=AiaeaErvh1kzHEhB" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<!-- 
+https://www.youtube.com/watch?v=BQtROdysZwc
 -->
 
 ---
-transition: slide-up
-level: 2
----
 
-# Navigation
+# OO & OOP (1)
 
-Hover on the bottom-left corner to see the navigation's controls panel, [learn more](https://sli.dev/guide/ui#navigation-bar)
+OOP，物件導向設計。將程式中的一切視為物件
 
-## Keyboard Shortcuts
+OOP 概念緣起：Simula, Smalltalk (1969 ~ 1972 Xerox PARC; Alan Kay, etc)
 
-|                                                     |                             |
-| --------------------------------------------------- | --------------------------- |
-| <kbd>right</kbd> / <kbd>space</kbd>                 | next animation or slide     |
-| <kbd>left</kbd>  / <kbd>shift</kbd><kbd>space</kbd> | previous animation or slide |
-| <kbd>up</kbd>                                       | previous slide              |
-| <kbd>down</kbd>                                     | next slide                  |
+<img src="./assets/2025-06-26-16-42-12.png" class="w-[450px]">
 
-<!-- https://sli.dev/guide/animations.html#click-animation -->
-<img
-  v-click
-  class="absolute -bottom-9 -left-7 w-80 opacity-50"
-  src="https://sli.dev/assets/arrow-bottom-left.svg"
-  alt=""
-/>
-<p v-after class="absolute bottom-23 left-45 opacity-30 transform -rotate-10">Here!</p>
+<!-- 
+  賈伯斯的 mac 介面聽說偷抄 smalltalk
+  https://spectrum.ieee.org/vera-rubin-observatory-first-images
+ -->
 
 ---
-layout: two-cols
-layoutClass: gap-16
----
 
-# Table of contents
+# OO & OOP (2)
 
-You can use the `Toc` component to generate a table of contents for your slides:
+Alan Kay: 我從 Cell 想出了 OOP 這個概念
 
-```html
-<Toc minDepth="1" maxDepth="1" />
-```
+- 保持狀態
+- 從自身或物件接收訊息
+- 接收訊息時，將訊息傳給自身或另一個物件
 
-The title will be inferred from your slide content, or you can override it with `title` and `level` in your frontmatter.
+<div class="flex justify-center gap-12 mt-6">
+  <div v-click>
 
-::right::
+  電獺
+  - 狀態
+    - 員工 xx 人
+    - 戰力 xx
+  - 能力
+    - 辦運動會
+    -  <span>比賽</span>
 
-<Toc text-sm minDepth="1" maxDepth="2" />
+  </div>
+  <div v-click>
 
----
-layout: image-right
-image: https://cover.sli.dev
----
+  雷虎
+  - 狀態
+    - 員工 oo 人
+    - 戰力 oo
+  - 能力
+    - 比賽
 
-# Code
+  </div>
+</div>
 
-Use code snippets and get the highlighting directly, and even types hover!
-
-```ts [filename-example.ts] {all|4|6|6-7|9|all} twoslash
-// TwoSlash enables TypeScript hover information
-// and errors in markdown code blocks
-// More at https://shiki.style/packages/twoslash
-import { computed, ref } from 'vue'
-
-const count = ref(0)
-const doubled = computed(() => count.value * 2)
-
-doubled.value = 2
-```
-
-<arrow v-click="[4, 5]" x1="350" y1="310" x2="195" y2="342" color="#953" width="2" arrowSize="1" />
-
-<!-- This allow you to embed external code blocks -->
-<<< @/snippets/external.ts#snippet
-
-<!-- Footer -->
-
-[Learn more](https://sli.dev/features/line-highlighting)
-
-<!-- Inline style -->
-<style>
-.footnotes-sep {
-  @apply mt-5 opacity-10;
-}
-.footnotes {
-  @apply text-sm opacity-75;
-}
-.footnote-backref {
-  display: none;
-}
-</style>
-
-<!--
-Notes can also sync with clicks
-
-[click] This will be highlighted after the first click
-
-[click] Highlighted with `count = ref(0)`
-
-[click:3] Last click (skip two clicks)
+<!-- 
+https://www.reddit.com/r/programming/comments/12pr8r/til_alan_kay_a_pioneer_in_developing/
 -->
 
 ---
-level: 2
----
 
-# Shiki Magic Move
+# OOAD
 
-Powered by [shiki-magic-move](https://shiki-magic-move.netlify.app/), Slidev supports animations across multiple code snippets.
-
-Add multiple code blocks and wrap them with <code>````md magic-move</code> (four backticks) to enable the magic move. For example:
-
-````md magic-move {lines: true}
-```ts {*|2|*}
-// step 1
-const author = reactive({
-  name: 'John Doe',
-  books: [
-    'Vue 2 - Advanced Guide',
-    'Vue 3 - Basic Guide',
-    'Vue 4 - The Mystery'
-  ]
-})
-```
-
-```ts {*|1-2|3-4|3-4,8}
-// step 2
-export default {
-  data() {
-    return {
-      author: {
-        name: 'John Doe',
-        books: [
-          'Vue 2 - Advanced Guide',
-          'Vue 3 - Basic Guide',
-          'Vue 4 - The Mystery'
-        ]
-      }
-    }
-  }
-}
-```
-
-```ts
-// step 3
-export default {
-  data: () => ({
-    author: {
-      name: 'John Doe',
-      books: [
-        'Vue 2 - Advanced Guide',
-        'Vue 3 - Basic Guide',
-        'Vue 4 - The Mystery'
-      ]
-    }
-  })
-}
-```
-
-Non-code blocks are ignored.
-
-```vue
-<!-- step 4 -->
-<script setup>
-const author = {
-  name: 'John Doe',
-  books: [
-    'Vue 2 - Advanced Guide',
-    'Vue 3 - Basic Guide',
-    'Vue 4 - The Mystery'
-  ]
-}
-</script>
-```
-````
-
----
-
-# Components
-
-<div grid="~ cols-2 gap-4">
-<div>
-
-You can use Vue components directly inside your slides.
-
-We have provided a few built-in components like `<Tweet/>` and `<Youtube/>` that you can use directly. And adding your custom components is also super easy.
-
-```html
-<Counter :count="10" />
-```
-
-<!-- ./components/Counter.vue -->
-<Counter :count="10" m="t-4" />
-
-Check out [the guides](https://sli.dev/builtin/components.html) for more.
-
-</div>
-<div>
-
-```html
-<Tweet id="1390115482657726468" />
-```
-
-<Tweet id="1390115482657726468" scale="0.65" />
-
-</div>
-</div>
-
-<!--
-Presenter note with **bold**, *italic*, and ~~striked~~ text.
-
-Also, HTML elements are valid:
-<div class="flex w-full">
-  <span style="flex-grow: 1;">Left content</span>
-  <span>Right content</span>
-</div>
--->
-
----
-class: px-20
----
-
-# Themes
-
-Slidev comes with powerful theming support. Themes can provide styles, layouts, components, or even configurations for tools. Switching between themes by just **one edit** in your frontmatter:
-
-<div grid="~ cols-2 gap-2" m="t-2">
-
-```yaml
----
-theme: default
----
-```
-
-```yaml
----
-theme: seriph
----
-```
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-default/01.png?raw=true" alt="">
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-seriph/01.png?raw=true" alt="">
-
-</div>
-
-Read more about [How to use a theme](https://sli.dev/guide/theme-addon#use-theme) and
-check out the [Awesome Themes Gallery](https://sli.dev/resources/theme-gallery).
-
----
-
-# Clicks Animations
-
-You can add `v-click` to elements to add a click animation.
+物件導向分析、設計大概在 1990 中期發展的，軟體開發、物件導向建模方法論
 
 <div v-click>
 
-This shows up when you click the slide:
+物件導向分析
+- 替真實世界建立模型
+- 物件被賦予的職責
+- 物件可以做哪些事情、可以有什麼狀態
+- 常使用類別圖
 
-```html
-<div v-click>This shows up when you click the slide.</div>
-```
+</div>
+
+<div v-click>
+
+物件導向設計 
+- 如何使用這些物件，來解決真實世界的問題
+- 常使用循序圖
 
 </div>
 
-<br>
 
-<v-click>
+<!-- 
+https://en.wikipedia.org/wiki/Object-oriented_analysis_and_design
+-->
 
-The <span v-mark.red="3"><code>v-mark</code> directive</span>
-also allows you to add
-<span v-mark.circle.orange="4">inline marks</span>
-, powered by [Rough Notation](https://roughnotation.com/):
-
-```html
-<span v-mark.underline.orange>inline markers</span>
-```
-
-</v-click>
-
-<div mt-20 v-click>
-
-[Learn more](https://sli.dev/guide/animations#click-animation)
-
-</div>
 
 ---
 
-# Motions
+# OOA
 
-Motion animations are powered by [@vueuse/motion](https://motion.vueuse.org/), triggered by `v-motion` directive.
 
-```html
-<div
-  v-motion
-  :initial="{ x: -80 }"
-  :enter="{ x: 0 }"
-  :click-3="{ x: 80 }"
-  :leave="{ x: 1000 }"
->
-  Slidev
-</div>
-```
-
-<div class="w-60 relative">
-  <div class="relative w-40 h-40">
-    <img
-      v-motion
-      :initial="{ x: 800, y: -100, scale: 1.5, rotate: -50 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-square.png"
-      alt=""
-    />
-    <img
-      v-motion
-      :initial="{ y: 500, x: -100, scale: 2 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-circle.png"
-      alt=""
-    />
-    <img
-      v-motion
-      :initial="{ x: 600, y: 400, scale: 2, rotate: 100 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-triangle.png"
-      alt=""
-    />
-  </div>
-
-  <div
-    class="text-5xl absolute top-14 left-40 text-[#2B90B6] -z-1"
-    v-motion
-    :initial="{ x: -80, opacity: 0}"
-    :enter="{ x: 0, opacity: 1, transition: { delay: 2000, duration: 1000 } }">
-    Slidev
-  </div>
-</div>
-
-<!-- vue script setup scripts can be directly used in markdown, and will only affects current page -->
-<script setup lang="ts">
-const final = {
-  x: 0,
-  y: 0,
-  rotate: 0,
-  scale: 1,
-  transition: {
-    type: 'spring',
-    damping: 10,
-    stiffness: 20,
-    mass: 2
-  }
-}
-</script>
-
-<div
-  v-motion
-  :initial="{ x:35, y: 30, opacity: 0}"
-  :enter="{ y: 0, opacity: 1, transition: { delay: 3500 } }">
-
-[Learn more](https://sli.dev/guide/animations.html#motion)
-
-</div>
-
----
-
-# LaTeX
-
-LaTeX is supported out-of-box. Powered by [KaTeX](https://katex.org/).
-
-<div h-3 />
-
-Inline $\sqrt{3x-1}+(1+x)^2$
-
-Block
-$$ {1|3|all}
-\begin{aligned}
-\nabla \cdot \vec{E} &= \frac{\rho}{\varepsilon_0} \\
-\nabla \cdot \vec{B} &= 0 \\
-\nabla \times \vec{E} &= -\frac{\partial\vec{B}}{\partial t} \\
-\nabla \times \vec{B} &= \mu_0\vec{J} + \mu_0\varepsilon_0\frac{\partial\vec{E}}{\partial t}
-\end{aligned}
-$$
-
-[Learn more](https://sli.dev/features/latex)
-
----
-
-# Diagrams
-
-You can create diagrams / graphs from textual descriptions, directly in your Markdown.
-
-<div class="grid grid-cols-4 gap-5 pt-4 -mb-6">
-
-```mermaid {scale: 0.5, alt: 'A simple sequence diagram'}
-sequenceDiagram
-    Alice->John: Hello John, how are you?
-    Note over Alice,John: A typical interaction
-```
-
-```mermaid {theme: 'neutral', scale: 0.8}
-graph TD
-B[Text] --> C{Decision}
-C -->|One| D[Result 1]
-C -->|Two| E[Result 2]
-```
+<div class="w-[700px]">
 
 ```mermaid
-mindmap
-  root((mindmap))
-    Origins
-      Long history
-      ::icon(fa fa-book)
-      Popularisation
-        British popular psychology author Tony Buzan
-    Research
-      On effectiveness<br/>and features
-      On Automatic creation
-        Uses
-            Creative techniques
-            Strategic planning
-            Argument mapping
-    Tools
-      Pen and paper
-      Mermaid
+classDiagram
+    direction LR
+    
+    %% 左側：使用者相關類別
+    class User {
+        -id: number
+        -username: string
+        -email: string
+        -passwordHash: string
+        -userType: UserType
+        -joinDate: Date
+        -createdAt: Date
+        -updatedAt: Date
+        +constructor(username, email, password)
+        +validatePassword(password): boolean
+        +isAdmin(): boolean
+        +getProfile(): UserProfile
+        +updateProfile(profile): void
+    }
+
+    class UserType {
+        <<enumeration>>
+        USER
+        ADMIN
+    }
+
+    %% 中間：內容相關類別
+    class Post {
+        -id: number
+        -title: string
+        -content: string
+        -authorId: number
+        -categoryId: number
+        -wowCount: number
+        -publishDate: Date
+        -createdAt: Date
+        -updatedAt: Date
+        +constructor(title, content, authorId, categoryId)
+        +validate(): boolean
+        +incrementWowCount(): void
+        +getWowCount(): number
+        +isAuthor(userId): boolean
+        +getSummary(): string
+    }
+
+    class Category {
+        -id: number
+        -name: string
+        -description: string
+        -createdAt: Date
+        +constructor(name, description)
+        +validate(): boolean
+        +getPostCount(): number
+    }
+
+    %% 右側：評價相關類別
+    class Wow {
+        -id: number
+        -userId: number
+        -postId: number
+        -wowDate: Date
+        +constructor(userId, postId)
+        +validate(): boolean
+        +isValidCombination(userId, postId): boolean
+    }
+
+    %% 關係定義（橫向排列）
+    User "1" --o "1" UserType : has_type
+    User "1" --o "0..*" Post : authors
+    User "1" --o "0..*" Wow : gives
+    
+    Category "1" --o "0..*" Post : categorizes
+    Post "1" --o "0..*" Wow : receives
 ```
 
-```plantuml {scale: 0.7}
-@startuml
 
-package "Some Group" {
-  HTTP - [First Component]
-  [Another Component]
-}
+</div>
 
-node "Other Groups" {
-  FTP - [Second Component]
-  [First Component] --> FTP
-}
+---
 
-cloud {
-  [Example 1]
-}
+# OOD
 
-database "MySql" {
-  folder "This is my folder" {
-    [Folder 3]
-  }
-  frame "Foo" {
-    [Frame 4]
-  }
-}
 
-[Another Component] --> [Example 1]
-[Example 1] --> [Folder 3]
-[Folder 3] --> [Frame 4]
+<div class="w-[440px]">
 
-@enduml
+```mermaid
+sequenceDiagram
+    participant User as 使用者
+    participant UI as Nuxt.js 前端
+    participant API as Server API
+    participant WS as WowService
+    participant WR as WowRepository
+    participant PR as PostRepository
+    participant DB as SQLite資料庫
+
+    User->>UI: 點擊Wow按鈕
+    UI->>API: POST /api/wows (Bearer Token)
+    API->>API: JWT Token驗證
+    API->>WS: giveWow(userId, postId)
+    
+    par 驗證過程
+        WS->>PR: getPostById(postId)
+        PR->>DB: SELECT查詢貼文
+        DB-->>PR: 貼文資料
+        PR-->>WS: 貼文存在
+    and
+        WS->>WR: checkExistingWow(userId, postId)
+        WR->>DB: SELECT查詢已存在的Wow
+        DB-->>WR: 查詢結果
+        WR-->>WS: 尚未給予Wow
+    end
+    
+    WS->>WS: 驗證使用者不是貼文作者
+    
+    alt 所有驗證通過
+        WS->>WR: createWow(userId, postId)
+        WR->>DB: INSERT Wow記錄
+        DB-->>WR: 插入成功
+        WR-->>WS: Wow創建成功
+        WS->>PR: incrementWowCount(postId)
+        PR->>DB: UPDATE posts SET wow_count = wow_count + 1
+        DB-->>PR: 更新成功
+        PR-->>WS: 計數更新成功
+        WS-->>API: Wow給予成功
+        API-->>UI: 返回成功回應
+        UI->>UI: 更新按鈕狀態為"已Wow"
+        UI->>UI: 更新Wow計數顯示
+        UI-->>User: 顯示操作成功
+    else 驗證失敗
+        WS-->>API: 返回錯誤訊息
+        API-->>UI: 返回錯誤回應
+        UI-->>User: 顯示錯誤訊息
+    end
 ```
 
 </div>
 
-Learn more: [Mermaid Diagrams](https://sli.dev/features/mermaid) and [PlantUML Diagrams](https://sli.dev/features/plantuml)
-
----
-foo: bar
-dragPos:
-  square: 691,32,167,_,-16
----
-
-# Draggable Elements
-
-Double-click on the draggable elements to edit their positions.
-
-<br>
-
-###### Directive Usage
-
-```md
-<img v-drag="'square'" src="https://sli.dev/logo.png">
-```
-
-<br>
-
-###### Component Usage
-
-```md
-<v-drag text-3xl>
-  <div class="i-carbon:arrow-up" />
-  Use the `v-drag` component to have a draggable container!
-</v-drag>
-```
-
-<v-drag pos="663,206,261,_,-15">
-  <div text-center text-3xl border border-main rounded>
-    Double-click me!
-  </div>
-</v-drag>
-
-<img v-drag="'square'" src="https://sli.dev/logo.png">
-
-###### Draggable Arrow
-
-```md
-<v-drag-arrow two-way />
-```
-
-<v-drag-arrow pos="67,452,253,46" two-way op70 />
-
----
-src: ./pages/imported-slides.md
-hide: false
----
-
----
-
-# Monaco Editor
-
-Slidev provides built-in Monaco Editor support.
-
-Add `{monaco}` to the code block to turn it into an editor:
-
-```ts {monaco}
-import { ref } from 'vue'
-import { emptyArray } from './external'
-
-const arr = ref(emptyArray(10))
-```
-
-Use `{monaco-run}` to create an editor that can execute the code directly in the slide:
-
-```ts {monaco-run}
-import { version } from 'vue'
-import { emptyArray, sayHello } from './external'
-
-sayHello()
-console.log(`vue ${version}`)
-console.log(emptyArray<number>(10).reduce(fib => [...fib, fib.at(-1)! + fib.at(-2)!], [1, 1]))
-```
-
----
-layout: center
-class: text-center
----
-
-# Learn More
-
-[Documentation](https://sli.dev) · [GitHub](https://github.com/slidevjs/slidev) · [Showcases](https://sli.dev/resources/showcases)
-
-<PoweredBySlidev mt-10 />

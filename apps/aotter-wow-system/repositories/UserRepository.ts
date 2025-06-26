@@ -1,13 +1,13 @@
 import { getDatabase } from '~/utils/database';
-import type { User, UserRegistration, UserPublic } from '~/types/user';
-import { UserType } from '~/types/user';
+import type { User, UserRegistration, UserPublic } from '../types/user';
+import { UserRole } from '../types/user';
 
 export class UserRepository {
   private db = getDatabase();
 
   // 根據 ID 查找使用者
-  async findById(id: number): Promise<User | null> {
-    const user = await this.db.get('users', (record) => record.id === id);
+  async findById(id: string | number): Promise<User | null> {
+    const user = await this.db.get('users', (record) => record.id === id.toString());
     if (!user) return null;
     return this.mapToUser(user);
   }
@@ -32,8 +32,7 @@ export class UserRepository {
       username: userRegistration.username,
       email: userRegistration.email,
       password: userRegistration.password,
-      join_date: new Date().toISOString(),
-      user_type: 'regular'
+      user_type: UserRole.USER
     });
 
     const userId = result.lastID;
@@ -46,13 +45,13 @@ export class UserRepository {
   }
 
   // 更新使用者資料
-  async update(id: number, updates: Partial<User>): Promise<User | null> {
+  async update(id: string | number, updates: Partial<User>): Promise<User | null> {
     const updateData: any = {};
 
     if (updates.username) updateData.username = updates.username;
     if (updates.email) updateData.email = updates.email;
-    if (updates.password) updateData.password = updates.password;
-    if (updates.userType) updateData.user_type = updates.userType;
+    if (updates.passwordHash) updateData.password = updates.passwordHash;
+    if (updates.role) updateData.user_type = updates.role;
 
     if (Object.keys(updateData).length === 0) {
       return this.findById(id);
@@ -107,9 +106,16 @@ export class UserRepository {
       id: row.id,
       username: row.username,
       email: row.email,
-      password: row.password,
-      joinDate: new Date(row.join_date),
-      userType: row.user_type as UserType
+      passwordHash: row.password,
+      role: (row.user_type || UserRole.USER) as UserRole,
+      profile: {
+        displayName: row.username,
+        bio: '',
+        avatar: ''
+      },
+      isActive: true,
+      createdAt: new Date(row.createdAt || row.join_date || new Date()),
+      updatedAt: new Date(row.updatedAt || row.createdAt || row.join_date || new Date())
     };
   }
 
@@ -119,8 +125,15 @@ export class UserRepository {
       id: row.id,
       username: row.username,
       email: row.email,
-      joinDate: new Date(row.join_date),
-      userType: row.user_type as UserType
+      role: (row.user_type || UserRole.USER) as UserRole,
+      profile: {
+        displayName: row.username,
+        bio: '',
+        avatar: ''
+      },
+      isActive: true,
+      createdAt: new Date(row.createdAt || row.join_date || new Date()),
+      updatedAt: new Date(row.updatedAt || row.createdAt || row.join_date || new Date())
     };
   }
 }

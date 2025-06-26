@@ -1,7 +1,6 @@
 import { getDatabase } from '~/utils/database'
 import { hashPassword, generateToken, isValidEmail, isValidPassword } from '~/utils/auth'
 import { UserRole } from '~/types'
-import type { UserRegistration } from '~/types'
 
 export default defineEventHandler(async (event) => {
   try {
@@ -62,8 +61,8 @@ export default defineEventHandler(async (event) => {
     const result = await db.insert('users', {
       username: body.username,
       email: body.email,
-      passwordHash,
-      role: UserRole.USER,
+      password: passwordHash,
+      user_type: UserRole.USER,
       profile: {
         displayName: body.displayName || body.username,
         bio: '',
@@ -78,11 +77,12 @@ export default defineEventHandler(async (event) => {
     const newUser = await db.findById('users', result.lastID)
     
     // 生成 JWT token
-    const token = generateToken({
+    const tokenPayload = {
       userId: newUser.id,
       username: newUser.username,
       role: newUser.role
-    })
+    }
+    const token = generateToken(tokenPayload)
 
     // 設置 cookie
     setCookie(event, 'auth-token', token, {
@@ -117,5 +117,3 @@ export default defineEventHandler(async (event) => {
     })
   }
 })
-
-

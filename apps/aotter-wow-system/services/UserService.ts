@@ -92,7 +92,7 @@ export class UserService {
       }
 
       // 驗證密碼
-      const isPasswordValid = await verifyPassword(userLogin.password, user.password);
+      const isPasswordValid = await verifyPassword(userLogin.password, user.passwordHash);
       if (!isPasswordValid) {
         return {
           success: false,

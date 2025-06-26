@@ -12,7 +12,6 @@ import 'anymatch';
 import 'node:crypto';
 import 'node:url';
 import '../../_/WowRepository.mjs';
-import '../../_/CategoryRepository.mjs';
 import 'bcryptjs';
 import 'jsonwebtoken';
 

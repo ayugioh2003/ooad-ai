@@ -3,10 +3,10 @@
     <!-- 歡迎區塊 -->
     <div class="wow-card wow-fade-in mb-8">
       <div class="text-center">
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
           歡迎來到 Aotter Wow 系統
         </h1>
-        <p class="text-lg text-gray-600 dark:text-gray-400 mb-6">
+        <p class="text-lg text-gray-600 mb-6">
           一個以 Wow 評價為核心的社群貼文平台
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -23,7 +23,7 @@
     <!-- 貼文列表 -->
     <div class="mb-8">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">最新貼文</h2>
+        <h2 class="text-2xl font-semibold text-gray-900">最新貼文</h2>
         <button
           @click="fetchPosts"
           :disabled="loading"
@@ -37,7 +37,7 @@
       <!-- 載入狀態 -->
       <div v-if="loading && posts.length === 0" class="text-center py-8">
         <div class="wow-loading mx-auto mb-4"></div>
-        <p class="text-gray-600 dark:text-gray-400">載入貼文中...</p>
+        <p class="text-gray-600">載入貼文中...</p>
       </div>
 
       <!-- 錯誤狀態 -->
@@ -61,10 +61,10 @@
                 {{ getInitials(post.author?.username || 'U') }}
               </div>
               <div>
-                <h3 class="font-medium text-gray-900 dark:text-white">
+                <h3 class="font-medium text-gray-900">
                   {{ post.author?.username || '匿名用戶' }}
                 </h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
+                <p class="text-sm text-gray-500">
                   {{ formatDate(post.createdAt) }}
                 </p>
               </div>
@@ -76,10 +76,10 @@
 
           <!-- 貼文內容 -->
           <div class="mb-4">
-            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <h4 class="text-lg font-semibold text-gray-900 mb-2">
               {{ post.title }}
             </h4>
-            <p class="text-gray-600 dark:text-gray-400 line-clamp-3">
+            <p class="text-gray-600 line-clamp-3">
               {{ post.content }}
             </p>
           </div>
@@ -95,7 +95,7 @@
                 <span>{{ post.wowCount || 0 }}</span>
               </button>
             </div>
-            <time class="text-sm text-gray-500 dark:text-gray-400">
+            <time class="text-sm text-gray-500">
               {{ formatTime(post.createdAt) }}
             </time>
           </div>
@@ -105,8 +105,8 @@
       <!-- 空狀態 -->
       <div v-else class="text-center py-12">
         <Icon name="heroicons:document-text" class="w-16 h-16 text-gray-400 mx-auto mb-4" />
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">還沒有貼文</h3>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">成為第一個發文的人吧！</p>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">還沒有貼文</h3>
+        <p class="text-gray-600 mb-4">成為第一個發文的人吧！</p>
         <NuxtLink to="/create" class="wow-button">
           發表第一篇貼文
         </NuxtLink>
@@ -119,19 +119,19 @@
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
         <div class="text-center">
           <div class="text-3xl font-bold text-primary-600 mb-2">{{ stats.users }}</div>
-          <div class="text-gray-600 dark:text-gray-400">註冊用戶</div>
+          <div class="text-gray-600">註冊用戶</div>
         </div>
         <div class="text-center">
           <div class="text-3xl font-bold text-primary-600 mb-2">{{ stats.posts }}</div>
-          <div class="text-gray-600 dark:text-gray-400">總貼文數</div>
+          <div class="text-gray-600">總貼文數</div>
         </div>
         <div class="text-center">
           <div class="text-3xl font-bold text-primary-600 mb-2">{{ stats.wows }}</div>
-          <div class="text-gray-600 dark:text-gray-400">Wow 評價</div>
+          <div class="text-gray-600">Wow 評價</div>
         </div>
         <div class="text-center">
           <div class="text-3xl font-bold text-primary-600 mb-2">{{ stats.categories }}</div>
-          <div class="text-gray-600 dark:text-gray-400">分類數量</div>
+          <div class="text-gray-600">分類數量</div>
         </div>
       </div>
     </div>

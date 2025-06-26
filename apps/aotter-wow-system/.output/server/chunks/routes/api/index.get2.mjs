@@ -14,7 +14,6 @@ import '../../_/WowRepository.mjs';
 import '../../_/database.mjs';
 import 'bcryptjs';
 import 'jsonwebtoken';
-import '../../_/CategoryRepository.mjs';
 
 const index_get = defineEventHandler(async (event) => {
   if (event.node.req.method !== "GET") {

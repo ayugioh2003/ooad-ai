@@ -5,11 +5,36 @@
   "description": "Aotter Wow System - OOAD Implementation",
   "version": "1.0.0",
   "scripts": {
-    "build": "echo 'Build aotter-wow-system'",
-    "dev": "echo 'Dev aotter-wow-system'",
-    "clean": "echo 'Clean aotter-wow-system'",
-    "lint": "echo 'Lint aotter-wow-system'",
-    "test": "echo 'Test aotter-wow-system'"
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "clean": "rm -rf .nuxt dist .output",
+    "lint": "eslint .",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@nuxt/ui": "^2.18.4",
+    "@nuxtjs/tailwindcss": "^6.12.1",
+    "@pinia/nuxt": "^0.5.4",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "nuxt": "^3.13.0",
+    "pinia": "^2.2.2",
+    "sqlite3": "^5.1.7",
+    "vue": "latest",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/sqlite3": "^3.1.11",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
   },
   "keywords": [
     "aotter",

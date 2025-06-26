@@ -11,14 +11,14 @@ export const usePostStore = defineStore('posts', () => {
     error.value = ''
     
     try {
-      const data = await $fetch('/api/posts', {
+      const response = await $fetch('/api/posts', {
         query: options
       })
       
-      if (data.success) {
-        posts.value = data.data || []
+      if (response.success) {
+        posts.value = response.data || []
       } else {
-        error.value = data.error || 'Failed to fetch posts'
+        error.value = response.error || 'Failed to fetch posts'
       }
     } catch (err: any) {
       console.error('Fetch posts error:', err)
@@ -31,10 +31,10 @@ export const usePostStore = defineStore('posts', () => {
   // 獲取分類
   const fetchCategories = async () => {
     try {
-      const data = await $fetch('/api/categories')
+      const response = await $fetch('/api/categories')
       
-      if (data.success) {
-        categories.value = data.data || []
+      if (response.success) {
+        categories.value = response.data || []
       }
     } catch (err: any) {
       console.error('Fetch categories error:', err)
@@ -44,7 +44,7 @@ export const usePostStore = defineStore('posts', () => {
   // 建立貼文
   const createPost = async (postData: any) => {
     try {
-      const data = await $fetch('/api/posts', {
+      const response = await $fetch('/api/posts', {
         method: 'POST',
         body: postData
       })

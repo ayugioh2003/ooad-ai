@@ -80,6 +80,3 @@ export interface UploadResponse {
   mimeType: string;
   url: string;
 }
-  wowCount: number;
-  publishDate: Date;
-}

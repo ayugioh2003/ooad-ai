@@ -19,13 +19,7 @@ export const verifyPassword = async (password: string, hashedPassword: string): 
 };
 
 // 生成 JWT Token
-export const generateToken = (user: UserPublic): string => {
-  const payload: JwtPayload = {
-    userId: user.id,
-    username: user.username,
-    userType: user.userType
-  };
-
+export const generateToken = (payload: JwtPayload): string => {
   return jwt.sign(payload, getJwtSecret(), {
     expiresIn: '7d' // 7天過期
   });
@@ -43,7 +37,7 @@ export const verifyToken = (token: string): JwtPayload | null => {
 
 // 從 User 轉換為 UserPublic（移除密碼）
 export const toUserPublic = (user: User): UserPublic => {
-  const { password, ...publicUser } = user;
+  const { passwordHash, ...publicUser } = user;
   return publicUser;
 };
 

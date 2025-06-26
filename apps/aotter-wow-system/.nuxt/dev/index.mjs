@@ -1,5 +1,5 @@
 import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import { tmpdir } from 'node:os';
-import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, getRequestURL, getResponseHeader, getQuery as getQuery$1, readBody, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getResponseStatus, createError, getRouterParam, setCookie, deleteCookie, getCookie, assertMethod, getHeader, getResponseStatusText } from 'file:///Users/aotter/Documents/hobby/ooad-ai/node_modules/.pnpm/h3@1.15.3/node_modules/h3/dist/index.mjs';
+import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, getRequestURL, getResponseHeader, getQuery as getQuery$1, readBody, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getResponseStatus, createError, getRouterParam, assertMethod, setCookie, deleteCookie, getCookie, getHeader, getResponseStatusText } from 'file:///Users/aotter/Documents/hobby/ooad-ai/node_modules/.pnpm/h3@1.15.3/node_modules/h3/dist/index.mjs';
 import { Server } from 'node:http';
 import { resolve, dirname, join } from 'node:path';
 import nodeCrypto from 'node:crypto';
@@ -1433,21 +1433,27 @@ async function getIslandContext(event) {
   return ctx;
 }
 
+const _lazy_Iff_cf = () => Promise.resolve().then(function () { return loginNew_post$1; });
 const _lazy__DhTXw = () => Promise.resolve().then(function () { return login_post$1; });
 const _lazy_iaevMc = () => Promise.resolve().then(function () { return logout_post$1; });
+const _lazy_707RuP = () => Promise.resolve().then(function () { return registerNew_post$1; });
 const _lazy_4fcbvo = () => Promise.resolve().then(function () { return register_post$1; });
 const _lazy_4UNtHt = () => Promise.resolve().then(function () { return index_get$3; });
+const _lazy_vJ9Djl = () => Promise.resolve().then(function () { return database_get$1; });
 const _lazy_WpYfYZ = () => Promise.resolve().then(function () { return index_get$1; });
-const _lazy_ejVQ_1 = () => Promise.resolve().then(function () { return index_post$2; });
+const _lazy_ejVQ_1 = () => Promise.resolve().then(function () { return index_post$3; });
 const _lazy_j1Zkhi = () => Promise.resolve().then(function () { return create_post$1; });
-const _lazy_bsK7hH = () => Promise.resolve().then(function () { return index_post; });
+const _lazy_bsK7hH = () => Promise.resolve().then(function () { return index_post$1; });
 const _lazy_2AI0Zd = () => Promise.resolve().then(function () { return renderer$1; });
 
 const handlers = [
+  { route: '/api/auth/login-new', handler: _lazy_Iff_cf, lazy: true, middleware: false, method: "post" },
   { route: '/api/auth/login', handler: _lazy__DhTXw, lazy: true, middleware: false, method: "post" },
   { route: '/api/auth/logout', handler: _lazy_iaevMc, lazy: true, middleware: false, method: "post" },
+  { route: '/api/auth/register-new', handler: _lazy_707RuP, lazy: true, middleware: false, method: "post" },
   { route: '/api/auth/register', handler: _lazy_4fcbvo, lazy: true, middleware: false, method: "post" },
   { route: '/api/categories', handler: _lazy_4UNtHt, lazy: true, middleware: false, method: "get" },
+  { route: '/api/debug/database', handler: _lazy_vJ9Djl, lazy: true, middleware: false, method: "get" },
   { route: '/api/posts', handler: _lazy_WpYfYZ, lazy: true, middleware: false, method: "get" },
   { route: '/api/posts', handler: _lazy_ejVQ_1, lazy: true, middleware: false, method: "post" },
   { route: '/api/wows/create', handler: _lazy_j1Zkhi, lazy: true, middleware: false, method: "post" },
@@ -1789,18 +1795,58 @@ var UserRole = /* @__PURE__ */ ((UserRole2) => {
   return UserRole2;
 })(UserRole || {});
 
-var __defProp$8 = Object.defineProperty;
-var __defNormalProp$8 = (obj, key, value) => key in obj ? __defProp$8(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$8 = (obj, key, value) => __defNormalProp$8(obj, typeof key !== "symbol" ? key + "" : key, value);
+const getJwtSecret = () => {
+  return process.env.JWT_SECRET || "your-secret-key-change-in-production";
+};
+const hashPassword = async (password) => {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
+};
+const verifyPassword = async (password, hashedPassword) => {
+  return await bcrypt.compare(password, hashedPassword);
+};
+const generateToken = (payload) => {
+  return jwt.sign(payload, getJwtSecret(), {
+    expiresIn: "7d"
+    // 7天過期
+  });
+};
+const verifyToken = (token) => {
+  try {
+    const decoded = jwt.verify(token, getJwtSecret());
+    return decoded;
+  } catch (error) {
+    return null;
+  }
+};
+const toUserPublic = (user) => {
+  const { passwordHash, ...publicUser } = user;
+  return publicUser;
+};
+const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+const isValidPassword = (password) => {
+  return password.length >= 6;
+};
+const isValidUsername = (username) => {
+  const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+  return usernameRegex.test(username);
+};
+
+var __defProp$7 = Object.defineProperty;
+var __defNormalProp$7 = (obj, key, value) => key in obj ? __defProp$7(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField$7 = (obj, key, value) => __defNormalProp$7(obj, typeof key !== "symbol" ? key + "" : key, value);
 class MemoryDatabase {
   constructor() {
-    __publicField$8(this, "storage", {
+    __publicField$7(this, "storage", {
       users: {},
       categories: {},
       posts: {},
       wows: {}
     });
-    __publicField$8(this, "idCounters", {
+    __publicField$7(this, "idCounters", {
       users: 1,
       categories: 1,
       posts: 1,
@@ -1843,12 +1889,12 @@ class MemoryDatabase {
     }
     if (Object.keys(this.storage.users).length === 0) {
       const adminId = this.generateId("users");
+      const adminPasswordHash = await hashPassword("admin123");
       this.storage.users[adminId] = {
         id: adminId,
         username: "admin",
         email: "admin@aotter-wow.com",
-        passwordHash: "$2a$10$placeholder.hash.for.admin123",
-        // 實際會被 bcrypt 替換
+        passwordHash: adminPasswordHash,
         role: UserRole.ADMIN,
         profile: {
           displayName: "\u7CFB\u7D71\u7BA1\u7406\u54E1",
@@ -1859,7 +1905,7 @@ class MemoryDatabase {
         createdAt: /* @__PURE__ */ new Date(),
         updatedAt: /* @__PURE__ */ new Date()
       };
-      console.log("\u2705 \u5DF2\u5275\u5EFA\u9810\u8A2D\u7BA1\u7406\u54E1\u5E33\u865F (admin@aotter-wow.com)");
+      console.log("\u2705 \u5DF2\u5275\u5EFA\u9810\u8A2D\u7BA1\u7406\u54E1\u5E33\u865F (admin@aotter-wow.com / admin123)");
     }
     console.log("\u{1F680} \u8A18\u61B6\u9AD4\u8CC7\u6599\u5EAB\u521D\u59CB\u5316\u5B8C\u6210");
   }
@@ -1946,12 +1992,88 @@ const getDatabase = () => {
   return dbInstance;
 };
 
-var __defProp$7 = Object.defineProperty;
-var __defNormalProp$7 = (obj, key, value) => key in obj ? __defProp$7(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$7 = (obj, key, value) => __defNormalProp$7(obj, key + "" , value);
+const loginNew_post = defineEventHandler(async (event) => {
+  try {
+    assertMethod(event, "POST");
+    const body = await readBody(event);
+    if (!body.email || !body.password) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Missing required fields: email, password"
+      });
+    }
+    if (!isValidEmail(body.email)) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Invalid email format"
+      });
+    }
+    const db = getDatabase();
+    const user = await db.get("users", (u) => u.email === body.email);
+    if (!user) {
+      throw createError({
+        statusCode: 401,
+        statusMessage: "Invalid email or password"
+      });
+    }
+    if (!user.isActive) {
+      throw createError({
+        statusCode: 401,
+        statusMessage: "Account is disabled"
+      });
+    }
+    const isPasswordValid = await verifyPassword(body.password, user.passwordHash);
+    if (!isPasswordValid) {
+      throw createError({
+        statusCode: 401,
+        statusMessage: "Invalid email or password"
+      });
+    }
+    const tokenPayload = {
+      userId: user.id,
+      username: user.username,
+      role: user.role
+    };
+    const token = generateToken(tokenPayload);
+    setCookie(event, "auth-token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 7
+      // 7 days
+    });
+    const { passwordHash: _, ...userWithoutPassword } = user;
+    return {
+      success: true,
+      data: {
+        user: userWithoutPassword,
+        token
+      },
+      message: "Login successful"
+    };
+  } catch (error) {
+    console.error("Login API Error:", error);
+    if (error.statusCode) {
+      throw error;
+    }
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Internal server error"
+    });
+  }
+});
+
+const loginNew_post$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: loginNew_post
+});
+
+var __defProp$6 = Object.defineProperty;
+var __defNormalProp$6 = (obj, key, value) => key in obj ? __defProp$6(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField$6 = (obj, key, value) => __defNormalProp$6(obj, key + "" , value);
 class UserRepository {
   constructor() {
-    __publicField$7(this, "db", getDatabase());
+    __publicField$6(this, "db", getDatabase());
   }
   // 根據 ID 查找使用者
   async findById(id) {
@@ -2051,57 +2173,12 @@ class UserRepository {
   }
 }
 
-const getJwtSecret = () => {
-  return process.env.JWT_SECRET || "your-secret-key-change-in-production";
-};
-const hashPassword = async (password) => {
-  const saltRounds = 10;
-  return await bcrypt.hash(password, saltRounds);
-};
-const verifyPassword = async (password, hashedPassword) => {
-  return await bcrypt.compare(password, hashedPassword);
-};
-const generateToken = (user) => {
-  const payload = {
-    userId: user.id,
-    username: user.username,
-    userType: user.userType
-  };
-  return jwt.sign(payload, getJwtSecret(), {
-    expiresIn: "7d"
-    // 7天過期
-  });
-};
-const verifyToken = (token) => {
-  try {
-    const decoded = jwt.verify(token, getJwtSecret());
-    return decoded;
-  } catch (error) {
-    return null;
-  }
-};
-const toUserPublic = (user) => {
-  const { password, ...publicUser } = user;
-  return publicUser;
-};
-const isValidEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-const isValidPassword = (password) => {
-  return password.length >= 6;
-};
-const isValidUsername = (username) => {
-  const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-  return usernameRegex.test(username);
-};
-
-var __defProp$6 = Object.defineProperty;
-var __defNormalProp$6 = (obj, key, value) => key in obj ? __defProp$6(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$6 = (obj, key, value) => __defNormalProp$6(obj, key + "" , value);
+var __defProp$5 = Object.defineProperty;
+var __defNormalProp$5 = (obj, key, value) => key in obj ? __defProp$5(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField$5 = (obj, key, value) => __defNormalProp$5(obj, key + "" , value);
 class UserService {
   constructor() {
-    __publicField$6(this, "userRepository", new UserRepository());
+    __publicField$5(this, "userRepository", new UserRepository());
   }
   // 使用者註冊
   async register(userRegistration) {
@@ -2401,60 +2478,180 @@ const logout_post$1 = /*#__PURE__*/Object.freeze({
   default: logout_post
 });
 
-const register_post = defineEventHandler(async (event) => {
-  var _a, _b;
-  if (event.node.req.method !== "POST") {
-    throw createError({
-      statusCode: 405,
-      statusMessage: "Method Not Allowed"
-    });
-  }
+const registerNew_post = defineEventHandler(async (event) => {
   try {
+    assertMethod(event, "POST");
     const body = await readBody(event);
     if (!body.username || !body.email || !body.password) {
       throw createError({
         statusCode: 400,
-        statusMessage: "Missing required fields"
+        statusMessage: "Missing required fields: username, email, password"
       });
     }
-    const userRegistration = {
-      username: body.username,
-      email: body.email,
-      password: body.password
-    };
-    const userService = new UserService();
-    const result = await userService.register(userRegistration);
-    if (!result.success) {
+    if (!isValidEmail(body.email)) {
       throw createError({
         statusCode: 400,
-        statusMessage: result.error || "Registration failed"
+        statusMessage: "Invalid email format"
       });
     }
-    const token = (_a = result.data) == null ? void 0 : _a.token;
-    if (token) {
-      setCookie(event, "auth-token", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "strict",
-        maxAge: 60 * 60 * 24 * 7
-        // 7 days
+    if (!isValidPassword(body.password)) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Password must be at least 6 characters long"
       });
     }
+    const db = getDatabase();
+    const existingUserByEmail = await db.get("users", (user) => user.email === body.email);
+    if (existingUserByEmail) {
+      throw createError({
+        statusCode: 409,
+        statusMessage: "Email already exists"
+      });
+    }
+    const existingUserByUsername = await db.get("users", (user) => user.username === body.username);
+    if (existingUserByUsername) {
+      throw createError({
+        statusCode: 409,
+        statusMessage: "Username already exists"
+      });
+    }
+    const passwordHash = await hashPassword(body.password);
+    const result = await db.insert("users", {
+      username: body.username,
+      email: body.email,
+      passwordHash,
+      role: UserRole.USER,
+      profile: {
+        displayName: body.displayName || body.username,
+        bio: "",
+        avatar: ""
+      },
+      isActive: true,
+      createdAt: /* @__PURE__ */ new Date(),
+      updatedAt: /* @__PURE__ */ new Date()
+    });
+    const newUser = await db.findById("users", result.lastID);
+    const tokenPayload = {
+      userId: newUser.id,
+      username: newUser.username,
+      role: newUser.role
+    };
+    const token = generateToken(tokenPayload);
+    setCookie(event, "auth-token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 7
+      // 7 days
+    });
+    const { passwordHash: _, ...userWithoutPassword } = newUser;
     return {
       success: true,
       data: {
-        user: (_b = result.data) == null ? void 0 : _b.user
+        user: userWithoutPassword,
+        token
       },
-      message: result.message
+      message: "Registration successful"
     };
   } catch (error) {
-    console.error("Registration API error:", error);
+    console.error("Register API Error:", error);
     if (error.statusCode) {
       throw error;
     }
     throw createError({
       statusCode: 500,
-      statusMessage: "Internal Server Error"
+      statusMessage: "Internal server error"
+    });
+  }
+});
+
+const registerNew_post$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: registerNew_post
+});
+
+const register_post = defineEventHandler(async (event) => {
+  try {
+    assertMethod(event, "POST");
+    const body = await readBody(event);
+    if (!body.username || !body.email || !body.password) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Missing required fields: username, email, password"
+      });
+    }
+    if (!isValidEmail(body.email)) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Invalid email format"
+      });
+    }
+    if (!isValidPassword(body.password)) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Password must be at least 6 characters long"
+      });
+    }
+    const db = getDatabase();
+    const existingUserByEmail = await db.get("users", (user) => user.email === body.email);
+    if (existingUserByEmail) {
+      throw createError({
+        statusCode: 409,
+        statusMessage: "Email already exists"
+      });
+    }
+    const existingUserByUsername = await db.get("users", (user) => user.username === body.username);
+    if (existingUserByUsername) {
+      throw createError({
+        statusCode: 409,
+        statusMessage: "Username already exists"
+      });
+    }
+    const passwordHash = await hashPassword(body.password);
+    const result = await db.insert("users", {
+      username: body.username,
+      email: body.email,
+      passwordHash,
+      role: UserRole.USER,
+      profile: {
+        displayName: body.displayName || body.username,
+        bio: "",
+        avatar: ""
+      },
+      isActive: true,
+      createdAt: /* @__PURE__ */ new Date(),
+      updatedAt: /* @__PURE__ */ new Date()
+    });
+    const newUser = await db.findById("users", result.lastID);
+    const token = generateToken({
+      userId: newUser.id,
+      username: newUser.username,
+      role: newUser.role
+    });
+    setCookie(event, "auth-token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 7
+      // 7 days
+    });
+    const { passwordHash: _, ...userWithoutPassword } = newUser;
+    return {
+      success: true,
+      data: {
+        user: userWithoutPassword,
+        token
+      },
+      message: "Registration successful"
+    };
+  } catch (error) {
+    console.error("Register API Error:", error);
+    if (error.statusCode) {
+      throw error;
+    }
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Internal server error"
     });
   }
 });
@@ -2464,284 +2661,14 @@ const register_post$1 = /*#__PURE__*/Object.freeze({
   default: register_post
 });
 
-var __defProp$5 = Object.defineProperty;
-var __defNormalProp$5 = (obj, key, value) => key in obj ? __defProp$5(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$5 = (obj, key, value) => __defNormalProp$5(obj, key + "" , value);
-class CategoryRepository {
-  constructor() {
-    __publicField$5(this, "db", getDatabase());
-  }
-  // 根據 ID 查找類別
-  async findById(id) {
-    const category = await this.db.get("categories", (record) => record.id === id);
-    if (!category) return null;
-    return this.mapToCategory(category);
-  }
-  // 根據名稱查找類別
-  async findByName(name) {
-    const category = await this.db.get("categories", (record) => record.name === name);
-    if (!category) return null;
-    return this.mapToCategory(category);
-  }
-  // 獲取所有類別
-  async findAll() {
-    const categories = await this.db.all("categories");
-    return categories.sort((a, b) => a.name.localeCompare(b.name)).map((category) => this.mapToCategory(category));
-  }
-  // 創建新類別
-  async create(name, description) {
-    const result = await this.db.insert("categories", {
-      name,
-      description,
-      created_date: (/* @__PURE__ */ new Date()).toISOString()
-    });
-    const categoryId = result.lastID;
-    const category = await this.findById(categoryId);
-    if (!category) {
-      throw new Error("Failed to retrieve created category");
-    }
-    return category;
-  }
-  // 更新類別
-  async update(id, updates) {
-    const updateData = {};
-    if (updates.name) updateData.name = updates.name;
-    if (updates.description) updateData.description = updates.description;
-    if (Object.keys(updateData).length === 0) {
-      return this.findById(id);
-    }
-    const result = await this.db.update("categories", id, updateData);
-    if (result.changes === 0) {
-      return null;
-    }
-    return this.findById(id);
-  }
-  // 刪除類別
-  async delete(id) {
-    const result = await this.db.delete("categories", id);
-    return result.changes > 0;
-  }
-  // 統計類別總數
-  async countAll() {
-    return await this.db.count("categories");
-  }
-  // 檢查類別名稱是否已存在
-  async nameExists(name) {
-    const category = await this.db.get("categories", (record) => record.name === name);
-    return !!category;
-  }
-  // 將資料庫記錄映射為 Category 物件
-  mapToCategory(row) {
-    return {
-      id: row.id,
-      name: row.name,
-      description: row.description,
-      createdDate: new Date(row.created_date)
-    };
-  }
-}
-
-var __defProp$4 = Object.defineProperty;
-var __defNormalProp$4 = (obj, key, value) => key in obj ? __defProp$4(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$4 = (obj, key, value) => __defNormalProp$4(obj, key + "" , value);
-class CategoryService {
-  constructor() {
-    __publicField$4(this, "categoryRepository", new CategoryRepository());
-  }
-  // 獲取所有類別
-  async getAllCategories() {
-    try {
-      const categories = await this.categoryRepository.findAll();
-      return {
-        success: true,
-        data: categories
-      };
-    } catch (error) {
-      console.error("Get categories error:", error);
-      return {
-        success: false,
-        error: "\u7372\u53D6\u985E\u5225\u5217\u8868\u5931\u6557"
-      };
-    }
-  }
-  // 根據 ID 獲取類別
-  async getCategoryById(id) {
-    try {
-      const category = await this.categoryRepository.findById(id);
-      if (!category) {
-        return {
-          success: false,
-          error: "\u985E\u5225\u4E0D\u5B58\u5728"
-        };
-      }
-      return {
-        success: true,
-        data: category
-      };
-    } catch (error) {
-      console.error("Get category error:", error);
-      return {
-        success: false,
-        error: "\u7372\u53D6\u985E\u5225\u5931\u6557"
-      };
-    }
-  }
-  // 創建新類別（管理員功能）
-  async createCategory(name, description) {
-    try {
-      const validation = this.validateCategoryData(name, description);
-      if (!validation.success) {
-        return validation;
-      }
-      const nameExists = await this.categoryRepository.nameExists(name);
-      if (nameExists) {
-        return {
-          success: false,
-          error: "\u985E\u5225\u540D\u7A31\u5DF2\u5B58\u5728"
-        };
-      }
-      const category = await this.categoryRepository.create(name, description);
-      return {
-        success: true,
-        data: category,
-        message: "\u985E\u5225\u5275\u5EFA\u6210\u529F"
-      };
-    } catch (error) {
-      console.error("Create category error:", error);
-      return {
-        success: false,
-        error: "\u5275\u5EFA\u985E\u5225\u5931\u6557"
-      };
-    }
-  }
-  // 更新類別（管理員功能）
-  async updateCategory(id, updates) {
-    try {
-      const existingCategory = await this.categoryRepository.findById(id);
-      if (!existingCategory) {
-        return {
-          success: false,
-          error: "\u985E\u5225\u4E0D\u5B58\u5728"
-        };
-      }
-      if (updates.name) {
-        if (updates.name.trim().length < 1) {
-          return {
-            success: false,
-            error: "\u985E\u5225\u540D\u7A31\u4E0D\u80FD\u70BA\u7A7A"
-          };
-        }
-        if (updates.name.length > 50) {
-          return {
-            success: false,
-            error: "\u985E\u5225\u540D\u7A31\u4E0D\u80FD\u8D85\u904E 50 \u5B57\u5143"
-          };
-        }
-        const existingWithSameName = await this.categoryRepository.findByName(updates.name);
-        if (existingWithSameName && existingWithSameName.id !== id) {
-          return {
-            success: false,
-            error: "\u985E\u5225\u540D\u7A31\u5DF2\u5B58\u5728"
-          };
-        }
-      }
-      if (updates.description && updates.description.length > 200) {
-        return {
-          success: false,
-          error: "\u985E\u5225\u63CF\u8FF0\u4E0D\u80FD\u8D85\u904E 200 \u5B57\u5143"
-        };
-      }
-      const category = await this.categoryRepository.update(id, updates);
-      if (!category) {
-        return {
-          success: false,
-          error: "\u66F4\u65B0\u5931\u6557"
-        };
-      }
-      return {
-        success: true,
-        data: category,
-        message: "\u985E\u5225\u66F4\u65B0\u6210\u529F"
-      };
-    } catch (error) {
-      console.error("Update category error:", error);
-      return {
-        success: false,
-        error: "\u66F4\u65B0\u985E\u5225\u5931\u6557"
-      };
-    }
-  }
-  // 刪除類別（管理員功能）
-  async deleteCategory(id) {
-    try {
-      const existingCategory = await this.categoryRepository.findById(id);
-      if (!existingCategory) {
-        return {
-          success: false,
-          error: "\u985E\u5225\u4E0D\u5B58\u5728"
-        };
-      }
-      const success = await this.categoryRepository.delete(id);
-      if (!success) {
-        return {
-          success: false,
-          error: "\u522A\u9664\u5931\u6557"
-        };
-      }
-      return {
-        success: true,
-        message: "\u985E\u5225\u522A\u9664\u6210\u529F"
-      };
-    } catch (error) {
-      console.error("Delete category error:", error);
-      return {
-        success: false,
-        error: "\u522A\u9664\u985E\u5225\u5931\u6557"
-      };
-    }
-  }
-  // 驗證類別資料
-  validateCategoryData(name, description) {
-    const errors = [];
-    if (!name || name.trim().length < 1) {
-      errors.push("\u985E\u5225\u540D\u7A31\u70BA\u5FC5\u586B\u6B04\u4F4D");
-    } else if (name.length > 50) {
-      errors.push("\u985E\u5225\u540D\u7A31\u4E0D\u80FD\u8D85\u904E 50 \u5B57\u5143");
-    }
-    if (description && description.length > 200) {
-      errors.push("\u985E\u5225\u63CF\u8FF0\u4E0D\u80FD\u8D85\u904E 200 \u5B57\u5143");
-    }
-    if (errors.length > 0) {
-      return {
-        success: false,
-        error: errors.join(", ")
-      };
-    }
-    return {
-      success: true
-    };
-  }
-}
-
 const index_get$2 = defineEventHandler(async (event) => {
-  if (event.node.req.method !== "GET") {
-    throw createError({
-      statusCode: 405,
-      statusMessage: "Method Not Allowed"
-    });
-  }
   try {
-    const categoryService = new CategoryService();
-    const result = await categoryService.getAllCategories();
-    if (!result.success) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: result.error || "Failed to get categories"
-      });
-    }
+    assertMethod(event, "GET");
+    const db = getDatabase();
+    const categories = await db.all("categories");
     return {
       success: true,
-      data: result.data
+      data: categories
     };
   } catch (error) {
     console.error("Categories API error:", error);
@@ -2750,7 +2677,7 @@ const index_get$2 = defineEventHandler(async (event) => {
     }
     throw createError({
       statusCode: 500,
-      statusMessage: "Internal Server Error"
+      statusMessage: "Internal server error"
     });
   }
 });
@@ -2760,12 +2687,40 @@ const index_get$3 = /*#__PURE__*/Object.freeze({
   default: index_get$2
 });
 
-var __defProp$3 = Object.defineProperty;
-var __defNormalProp$3 = (obj, key, value) => key in obj ? __defProp$3(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$3 = (obj, key, value) => __defNormalProp$3(obj, key + "" , value);
+const database_get = defineEventHandler(async (event) => {
+  try {
+    const db = getDatabase();
+    await db.initTables();
+    const categories = await db.all("categories");
+    return {
+      success: true,
+      message: "Database debug info",
+      data: {
+        categories,
+        categoriesCount: categories.length,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      }
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+      stack: error.stack
+    };
+  }
+});
+
+const database_get$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: database_get
+});
+
+var __defProp$4 = Object.defineProperty;
+var __defNormalProp$4 = (obj, key, value) => key in obj ? __defProp$4(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField$4 = (obj, key, value) => __defNormalProp$4(obj, key + "" , value);
 class PostRepository {
   constructor() {
-    __publicField$3(this, "db", getDatabase());
+    __publicField$4(this, "db", getDatabase());
   }
   // 根據 ID 查找貼文
   async findById(id) {
@@ -2913,6 +2868,83 @@ class PostRepository {
         id: category.id,
         name: category.name
       } : void 0
+    };
+  }
+}
+
+var __defProp$3 = Object.defineProperty;
+var __defNormalProp$3 = (obj, key, value) => key in obj ? __defProp$3(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField$3 = (obj, key, value) => __defNormalProp$3(obj, key + "" , value);
+class CategoryRepository {
+  constructor() {
+    __publicField$3(this, "db", getDatabase());
+  }
+  // 根據 ID 查找類別
+  async findById(id) {
+    const category = await this.db.get("categories", (record) => record.id === id);
+    if (!category) return null;
+    return this.mapToCategory(category);
+  }
+  // 根據名稱查找類別
+  async findByName(name) {
+    const category = await this.db.get("categories", (record) => record.name === name);
+    if (!category) return null;
+    return this.mapToCategory(category);
+  }
+  // 獲取所有類別
+  async findAll() {
+    const categories = await this.db.all("categories");
+    return categories.sort((a, b) => a.name.localeCompare(b.name)).map((category) => this.mapToCategory(category));
+  }
+  // 創建新類別
+  async create(name, description) {
+    const result = await this.db.insert("categories", {
+      name,
+      description,
+      created_date: (/* @__PURE__ */ new Date()).toISOString()
+    });
+    const categoryId = result.lastID;
+    const category = await this.findById(categoryId);
+    if (!category) {
+      throw new Error("Failed to retrieve created category");
+    }
+    return category;
+  }
+  // 更新類別
+  async update(id, updates) {
+    const updateData = {};
+    if (updates.name) updateData.name = updates.name;
+    if (updates.description) updateData.description = updates.description;
+    if (Object.keys(updateData).length === 0) {
+      return this.findById(id);
+    }
+    const result = await this.db.update("categories", id, updateData);
+    if (result.changes === 0) {
+      return null;
+    }
+    return this.findById(id);
+  }
+  // 刪除類別
+  async delete(id) {
+    const result = await this.db.delete("categories", id);
+    return result.changes > 0;
+  }
+  // 統計類別總數
+  async countAll() {
+    return await this.db.count("categories");
+  }
+  // 檢查類別名稱是否已存在
+  async nameExists(name) {
+    const category = await this.db.get("categories", (record) => record.name === name);
+    return !!category;
+  }
+  // 將資料庫記錄映射為 Category 物件
+  mapToCategory(row) {
+    return {
+      id: row.id,
+      name: row.name,
+      description: row.description,
+      createdDate: new Date(row.created_date)
     };
   }
 }
@@ -3283,7 +3315,7 @@ const index_get$1 = /*#__PURE__*/Object.freeze({
   default: index_get
 });
 
-const index_post$1 = defineEventHandler(async (event) => {
+const index_post$2 = defineEventHandler(async (event) => {
   if (event.node.req.method !== "POST") {
     throw createError({
       statusCode: 405,
@@ -3342,9 +3374,9 @@ const index_post$1 = defineEventHandler(async (event) => {
   }
 });
 
-const index_post$2 = /*#__PURE__*/Object.freeze({
+const index_post$3 = /*#__PURE__*/Object.freeze({
   __proto__: null,
-  default: index_post$1
+  default: index_post$2
 });
 
 var __defProp = Object.defineProperty;
@@ -3562,8 +3594,70 @@ const create_post$1 = /*#__PURE__*/Object.freeze({
   default: create_post
 });
 
-const index_post = /*#__PURE__*/Object.freeze({
-  __proto__: null
+const index_post = defineEventHandler(async (event) => {
+  try {
+    assertMethod(event, "POST");
+    const body = await readBody(event);
+    if (!body.postId || !body.category) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Missing required fields: postId and category"
+      });
+    }
+    const userId = "user_test_1";
+    const db = getDatabase();
+    const post = await db.findById("posts", body.postId);
+    if (!post) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: "Post not found"
+      });
+    }
+    const existingWow = await db.get(
+      "wows",
+      (wow) => wow.userId === userId && wow.postId === body.postId
+    );
+    if (existingWow) {
+      await db.update("wows", existingWow.id, {
+        category: body.category,
+        updatedAt: /* @__PURE__ */ new Date()
+      });
+    } else {
+      await db.insert("wows", {
+        userId,
+        postId: body.postId,
+        category: body.category,
+        createdAt: /* @__PURE__ */ new Date()
+      });
+      const currentWowCount = post.wowCount || 0;
+      await db.update("posts", body.postId, {
+        wowCount: currentWowCount + 1
+      });
+    }
+    return {
+      success: true,
+      message: "Wow \u8A55\u50F9\u5DF2\u6210\u529F\u66F4\u65B0",
+      data: {
+        postId: body.postId,
+        category: body.category,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      }
+    };
+  } catch (error) {
+    console.error("Wow API Error:", error);
+    if (error.statusCode) {
+      throw error;
+    }
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Internal server error"
+    });
+  }
+});
+
+const index_post$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: index_post
 });
 
 function renderPayloadResponse(ssrContext) {

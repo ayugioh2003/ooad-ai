@@ -1,40 +1,31 @@
-import { CategoryService } from '~/services/CategoryService';
+import { getDatabase } from '~/utils/database'
 
 export default defineEventHandler(async (event) => {
-  // 只允許 GET 請求
-  if (event.node.req.method !== 'GET') {
-    throw createError({
-      statusCode: 405,
-      statusMessage: 'Method Not Allowed'
-    });
-  }
-
   try {
-    const categoryService = new CategoryService();
-    const result = await categoryService.getAllCategories();
+    // 只允許 GET 請求
+    assertMethod(event, 'GET')
 
-    if (!result.success) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: result.error || 'Failed to get categories'
-      });
-    }
+    // 獲取資料庫實例
+    const db = getDatabase()
+    
+    // 獲取所有分類
+    const categories = await db.all('categories')
 
     return {
       success: true,
-      data: result.data
-    };
+      data: categories
+    }
 
   } catch (error: any) {
-    console.error('Categories API error:', error);
+    console.error('Categories API error:', error)
     
     if (error.statusCode) {
-      throw error;
+      throw error
     }
 
     throw createError({
       statusCode: 500,
-      statusMessage: 'Internal Server Error'
-    });
+      statusMessage: 'Internal server error'
+    })
   }
-});
+})

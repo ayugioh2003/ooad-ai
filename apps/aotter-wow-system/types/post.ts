@@ -110,12 +110,10 @@ export interface CategoryCreate {
   color?: string;
   icon?: string;
 }
-  wowDate: Date;
-}
 
 // Wow 統計
 export interface WowStats {
-  postId: number;
+  postId: string;
   wowCount: number;
   lastWowDate?: Date;
 }

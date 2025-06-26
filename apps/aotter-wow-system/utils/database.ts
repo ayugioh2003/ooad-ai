@@ -1,4 +1,5 @@
 import { UserRole, WowCategory } from '~/types/user'
+import { hashPassword } from '~/utils/auth'
 import type { User, Category, Post, Wow } from '~/types'
 
 // 暫時使用記憶體儲存，避免 SQLite 依賴問題
@@ -76,11 +77,14 @@ class MemoryDatabase {
     // 創建預設管理員帳號
     if (Object.keys(this.storage.users).length === 0) {
       const adminId = this.generateId('users');
+      // 為管理員創建雜湊密碼 (密碼: admin123)
+      const adminPasswordHash = await hashPassword('admin123');
+      
       this.storage.users[adminId] = {
         id: adminId,
         username: 'admin',
         email: 'admin@aotter-wow.com',
-        passwordHash: '$2a$10$placeholder.hash.for.admin123', // 實際會被 bcrypt 替換
+        passwordHash: adminPasswordHash,
         role: UserRole.ADMIN,
         profile: {
           displayName: '系統管理員',
@@ -91,7 +95,7 @@ class MemoryDatabase {
         createdAt: new Date(),
         updatedAt: new Date()
       };
-      console.log('✅ 已創建預設管理員帳號 (admin@aotter-wow.com)');
+      console.log('✅ 已創建預設管理員帳號 (admin@aotter-wow.com / admin123)');
     }
 
     console.log('🚀 記憶體資料庫初始化完成');

@@ -30,6 +30,8 @@ export { requestIdleCallback, cancelIdleCallback } from '#app/compat/idle-callba
 export { setInterval } from '#app/compat/interval';
 export { hashPassword, verifyPassword, generateToken, verifyToken, toUserPublic, isValidEmail, isValidPassword, isValidUsername } from '../utils/auth';
 export { getDatabase } from '../utils/database';
+export { useAuthStore } from '../stores/auth';
+export { usePostStore } from '../stores/posts';
 export { defineStore, acceptHMRUpdate, usePinia, storeToRefs } from '../../../node_modules/.pnpm/@pinia+nuxt@0.5.5_magicast@0.3.5_typescript@5.8.3_vue@3.5.17_typescript@5.8.3_/node_modules/@pinia/nuxt/dist/runtime/composables';
 export { useNuxtDevTools } from '../../../node_modules/.pnpm/@nuxt+devtools@2.5.0_vite@6.3.5_@types+node@22.15.33_jiti@2.4.2_terser@5.43.1_yaml@2.8.0__vue@3.5.17_typescript@5.8.3_/node_modules/@nuxt/devtools/dist/runtime/use-nuxt-devtools';
 export { definePageMeta } from '../../../node_modules/.pnpm/nuxt@3.17.5_@parcel+watcher@2.5.1_@types+node@22.15.33_db0@0.3.2_sqlite3@5.1.7__encoding@0.1._75g2ekzuhkgmgkdk4mug73qcs4/node_modules/nuxt/dist/pages/runtime/composables';

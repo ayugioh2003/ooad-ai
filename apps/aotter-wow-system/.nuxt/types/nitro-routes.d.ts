@@ -19,6 +19,9 @@ declare module "nitropack/types" {
       'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/posts/index.get').default>>>>
       'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/posts/index.post').default>>>>
     }
+    '/api/wows/create': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/wows/create.post').default>>>>
+    }
     '/api/wows': {
       'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/wows/index.post').default>>>>
     }

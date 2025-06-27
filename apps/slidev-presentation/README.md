@@ -2,6 +2,12 @@
 
 OOAD AI 專案的簡報套件，使用 Slidev 製作。
 
+## 線上簡報
+
+🚀 **Live Demo**: [https://ayugioh2003.github.io/ooad-ai/](https://ayugioh2003.github.io/ooad-ai/)
+
+此簡報透過 GitHub Actions 自動部署到 GitHub Pages。
+
 ## 開發
 
 ```bash

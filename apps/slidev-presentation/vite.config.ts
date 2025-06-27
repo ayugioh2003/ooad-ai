@@ -1,8 +1,10 @@
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+  base: '/ooad-ai/', // process.env.NODE_ENV === 'production' ? '/ooad-ai/' : '/',
   build: {
-    sourcemap: false
+    sourcemap: false,
+    outDir: 'dist'
   },
   server: {
     hmr: {

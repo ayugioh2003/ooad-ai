@@ -88,11 +88,11 @@ h1 {
 需求、畫面、程式你都要做好。
 東西明天給我，OK 吧
 
-我：...
+員工：...
 
 ---
 
-# 軟體開發的生命週期
+# 專案開始到結束：軟體開發的生命週期
 
 <div class="relative">
 
@@ -107,12 +107,13 @@ flowchart RL
   subgraph 程式開發端
     E[程式撰寫] --> F[測試]
     F --> G[上線部署]
+    G --> H[維運]
   end
 
   D -- 設計文件/規格書 --> E
 ```
 
-<div class="absolute right-[110px] top-0 border-red-500 border w-[340px] h-[90px]" v-click="2">
+<div class="absolute right-[80px] top-0 border-red-500 border w-[340px] h-[80px]" v-click="2">
 </div>
 
 </div>
@@ -127,31 +128,50 @@ flowchart RL
 
 <img src="./assets/2025-06-26-17-30-49.png" class="w-[300px]" />
 
-老闆：我尾牙猜題活動不小心給錯選項，研發部明年生出一個 Aotter Wow 系統可以吧
+老闆：我尾牙猜題活動不小心給錯選項，研發下個月出一個 Aotter Wow 系統可以吧
 
 研發部：...
 
 ---
 
-# 概念發想
+# 概念發想 (需求收集)
 
 能讓使用者發出 Wow 的驚嘆
 
 - 本來想做個可愛動物園系統，讓使用者看到都能 Wow
-- 但想不到要怎麼做成程式
-- 就魔轉成評價系統，讓使用者可以按 Wow
+- 但想不到要怎麼做成什麼程式
+- 就魔轉成評價系統，讓使用者可以按 Wow (類 Threads)
 
 ---
 
 # 名詞介紹
 
-- USE CASE
+- USE CASE -> 需求分析
 - OO / OOP
-- OOAD
+- OOA -> 系統分析
+- OOD -> 系統設計
 
 ---
 
-# Use Case
+# 需求分析：Use Case (1)
+
+用例（英語：use case），或譯使用案例、用況
+
+是軟體工程或系統工程中對系統如何反應外界請求的描述，每個用例提供了一個或多個場景
+
+該場景說明了系統是如何和最終用戶或其它系統互動
+
+也就是誰可以用系統做什麼，從而完成一個明確的業務目標。(wikipedia)
+
+<img src="./assets/2025-06-27-13-08-42.png" class="w-[500px]" />
+
+<!-- https://zh.wikipedia.org/zh-tw/%E7%94%A8%E4%BE%8B -->
+
+---
+
+# 需求分析：Use Case (2)
+
+(mermard flowchart 模擬 UML use case)
 
 <div class="w-[650px]">
 
@@ -238,7 +258,7 @@ flowchart LR
 </div>
 ---
 
-# OO
+# 物件導向：OO
 
 名人講 OO
 
@@ -250,9 +270,9 @@ https://www.youtube.com/watch?v=BQtROdysZwc
 
 ---
 
-# OO & OOP (1)
+# 物件導向程式設計：OO & OOP (1)
 
-OOP，物件導向程式設計。將程式中的一切視為物件
+OO，物件導向。將程式中的一切視為物件
 
 OOP 概念緣起：Simula, Smalltalk (1969 ~ 1972 Xerox PARC; Alan Kay, etc)
 
@@ -265,12 +285,12 @@ OOP 概念緣起：Simula, Smalltalk (1969 ~ 1972 Xerox PARC; Alan Kay, etc)
 
 ---
 
-# OO & OOP (2)
+# 物件導向程式設計：OO & OOP (2)
 
 <div class="flex gap-20">
 
 <div>
-Alan Kay: 我從 Cell 想出了 OOP 這個概念
+Alan Kay: 我從 Cell 想出了 OO / OOP 這個概念
 
 - 保持狀態
 - 從自身或物件接收訊息
@@ -284,7 +304,7 @@ Alan Kay: 我從 Cell 想出了 OOP 這個概念
 
 
 <div class="flex justify-center gap-12 mt-6">
-  <div v-click>
+  <div v-click class="border p-3">
 
   電獺
   - 狀態
@@ -295,7 +315,7 @@ Alan Kay: 我從 Cell 想出了 OOP 這個概念
     -  <span>比賽</span>
 
   </div>
-  <div v-click>
+  <div v-click class="border p-3">
 
   雷虎
   - 狀態
@@ -313,37 +333,53 @@ https://www.reddit.com/r/programming/comments/12pr8r/til_alan_kay_a_pioneer_in_d
 
 ---
 
-# OOAD
+# 物件導向分析與設計：OOAD
 
 物件導向分析、設計大概在 1990 中期發展的，軟體開發、物件導向建模方法論。常使用 UML
 
-<div v-click>
+<div class="flex gap-10">
 
-物件導向分析 (靜態)
-- 替真實世界建立模型
-- 物件被賦予的職責
-- 物件可以做哪些事情、可以有什麼狀態
-- 常使用類別圖
+<div>
+
+  <div v-click>
+
+  物件導向分析 (靜態)
+  - 替真實世界建立模型
+  - 物件被賦予的職責
+  - 物件可以做哪些事情、可以有什麼狀態
+  - 常使用類別圖
+
+  </div>
+
+  <div v-click>
+
+  物件導向設計 (動態)
+  - 如何安排、使用這些物件，來解決真實世界的問題
+  - 常使用循序圖
+
+  </div>
 
 </div>
 
-<div v-click>
-
-物件導向設計 (動態)
-- 如何安排、使用這些物件，來解決真實世界的問題
-- 常使用循序圖
+<div>
+  <img src="./assets/2025-06-27-15-10-56.png" class="w-[300px]" />
+  <img src="./assets/2025-06-27-15-17-00.png" class="w-[300px]" />
 
 </div>
+
+</div>
+
 
 
 <!-- 
 https://en.wikipedia.org/wiki/Object-oriented_analysis_and_design
+https://wiztechsite.wordpress.com/2014/06/09/sequence-diagram-descriptions/
 -->
 
 
 ---
 
-# OOA
+# 物件導向分析：OOA
 
 
 <div class="w-[700px]">
@@ -429,7 +465,7 @@ classDiagram
 
 ---
 
-# OOD
+# 物件導向設計：OOD
 
 
 <div class="w-[440px]">
@@ -498,6 +534,7 @@ sequenceDiagram
 
 <v-clicks>
 
+- markdown + mermaid + AI 感覺還不錯用
 - OOAD 感覺比較適合小型的程式開發 (可能是我還沒很懂)
 - 可以嘗試建立 project template prompt。可能還需要
   - 網站地圖
@@ -505,3 +542,9 @@ sequenceDiagram
 - 之後試看看 gemini cli 看看，不然要一直確認指令滿麻煩的
 
 </v-clicks>
+
+---
+
+# Q&A
+
+

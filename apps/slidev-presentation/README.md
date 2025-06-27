@@ -8,6 +8,8 @@ OOAD AI 專案的簡報套件，使用 Slidev 製作。
 
 此簡報透過 GitHub Actions 自動部署到 GitHub Pages。
 
+> 📝 更新時間：2025-06-27
+
 ## 開發
 
 ```bash

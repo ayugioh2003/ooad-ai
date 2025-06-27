@@ -256,6 +256,11 @@
 </template>
 
 <script setup lang="ts">
+// 添加認證中間件
+definePageMeta({
+  middleware: 'auth'
+})
+
 // 頁面標題
 useHead({
   title: 'Aotter Wow - 個人設定'
@@ -264,11 +269,6 @@ useHead({
 // 認證檢查
 const authStore = useAuthStore()
 const user = computed(() => authStore.user)
-
-// 如果未登入，重導向到登入頁面
-if (!authStore.isLoggedIn) {
-  await navigateTo('/auth')
-}
 
 // 使用者初始字母
 const userInitials = computed(() => {

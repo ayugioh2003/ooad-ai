@@ -92,7 +92,9 @@ h1 {
 
 ---
 
-# 軟體開發的流程
+# 軟體開發的生命週期
+
+<div class="relative">
 
 ```mermaid
 flowchart RL
@@ -110,7 +112,12 @@ flowchart RL
   D -- 設計文件/規格書 --> E
 ```
 
-<div class="flex justify-end" v-click>
+<div class="absolute right-[110px] top-0 border-red-500 border w-[340px] h-[90px]" v-click="2">
+</div>
+
+</div>
+
+<div class="flex justify-end" v-click="1">
   <img src="./assets/2025-06-25-18-40-56.png" class="w-[500px]"/>
 </div>
 
@@ -245,7 +252,7 @@ https://www.youtube.com/watch?v=BQtROdysZwc
 
 # OO & OOP (1)
 
-OOP，物件導向設計。將程式中的一切視為物件
+OOP，物件導向程式設計。將程式中的一切視為物件
 
 OOP 概念緣起：Simula, Smalltalk (1969 ~ 1972 Xerox PARC; Alan Kay, etc)
 
@@ -260,11 +267,21 @@ OOP 概念緣起：Simula, Smalltalk (1969 ~ 1972 Xerox PARC; Alan Kay, etc)
 
 # OO & OOP (2)
 
+<div class="flex gap-20">
+
+<div>
 Alan Kay: 我從 Cell 想出了 OOP 這個概念
 
 - 保持狀態
 - 從自身或物件接收訊息
 - 接收訊息時，將訊息傳給自身或另一個物件
+</div>
+
+<img src="./assets/2025-06-27-11-08-15.png" class="w-[150px]" />
+
+</div>
+
+
 
 <div class="flex justify-center gap-12 mt-6">
   <div v-click>
@@ -298,11 +315,11 @@ https://www.reddit.com/r/programming/comments/12pr8r/til_alan_kay_a_pioneer_in_d
 
 # OOAD
 
-物件導向分析、設計大概在 1990 中期發展的，軟體開發、物件導向建模方法論
+物件導向分析、設計大概在 1990 中期發展的，軟體開發、物件導向建模方法論。常使用 UML
 
 <div v-click>
 
-物件導向分析
+物件導向分析 (靜態)
 - 替真實世界建立模型
 - 物件被賦予的職責
 - 物件可以做哪些事情、可以有什麼狀態
@@ -312,8 +329,8 @@ https://www.reddit.com/r/programming/comments/12pr8r/til_alan_kay_a_pioneer_in_d
 
 <div v-click>
 
-物件導向設計 
-- 如何使用這些物件，來解決真實世界的問題
+物件導向設計 (動態)
+- 如何安排、使用這些物件，來解決真實世界的問題
 - 常使用循序圖
 
 </div>
@@ -469,3 +486,22 @@ sequenceDiagram
 
 </div>
 
+---
+
+# 還沒完成的網站 Demo
+
+![](./assets/2025-06-27-10-56-14.png)
+
+---
+
+# 小結
+
+<v-clicks>
+
+- OOAD 感覺比較適合小型的程式開發 (可能是我還沒很懂)
+- 可以嘗試建立 project template prompt。可能還需要
+  - 網站地圖
+  - 線稿圖 (或用 MCP + Figma 幫產 wireframe / mockup)
+- 之後試看看 gemini cli 看看，不然要一直確認指令滿麻煩的
+
+</v-clicks>

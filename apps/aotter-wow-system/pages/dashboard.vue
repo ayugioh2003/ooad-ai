@@ -184,7 +184,11 @@
 </template>
 
 <script setup lang="ts">
-// @ts-ignore - Nuxt 3 auto-imports
+// 添加認證中間件
+definePageMeta({
+  middleware: 'auth'
+})
+
 // 頁面標題
 useHead({
   title: 'Aotter Wow - 個人後台'
@@ -193,13 +197,6 @@ useHead({
 // 認證檢查
 const authStore = useAuthStore()
 const user = computed(() => authStore.user)
-
-// 如果未登入，重導向到登入頁面
-if (!authStore.isLoggedIn) {
-  if (process.client) {
-    await navigateTo('/auth')
-  }
-}
 
 // 使用者顯示資訊
 const userDisplayName = computed(() => {
